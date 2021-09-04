@@ -177,8 +177,8 @@ const main = async () => {
   await Promise.all(lsifParsed.map(async ({ doc, additions, hovers, references }) => {
     const srcRaw = unwrap(srcMap.raw.get(doc.uri));
     const depth = doc.uri.slice(projectRoot.length).split('/').length - 2;
-    const relPath = relative(projectRoot, doc.uri);  
-    const srcHighlighted = hljs.highlight(srcRaw, { language: 'js' }).value;
+    const relPath = relative(projectRoot, doc.uri);
+    const srcHighlighted = hljs.highlight(srcRaw, { language: doc.languageId }).value;
     const src = putInSrc(srcHighlighted, additions);
     const destPath = join(outputPath, relPath);
     const destFolder = dirname(destPath);
