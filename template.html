@@ -1,0 +1,46 @@
+<html>
+  <head>
+    <title>hello</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/default.min.css" integrity="sha384-bVi32MzPMHhQQoX43XwbzyE2I2YlQETXzSzS0rnURpcv/pkxtPnZ8QpbAN9AzEu5" crossorigin="anonymous">
+    <link rel="stylesheet" href="<%= distPath %>main.css?v=<%= (new Date()).valueOf() %>">
+  </head>
+  <body style="display: flex; flex-direction: row; margin: 0;">
+    <div id="side-panel">
+      <div id="side-panel-tabs">
+        <div id="tab-panel-files" class="side-panel-tabs-button enabled">files</div>
+        <div id="tab-panel-search" class="side-panel-tabs-button">search</div>
+      </div>
+      <div class="side-panel-tab" id="panel-files"><%- tree %></div>
+      <div class="side-panel-tab" id="panel-search" hidden>
+        <input type="text" id="search-input" disabled>
+        <div id="search-result">Not implemented yet</div>
+      </div>
+    </div>
+    <div id = "main-panel">
+    <pre class="line-numbers"><%
+      const t = src.split('\n').length - 1;
+      for (let i = 1; i <= t; i += 1) { %>
+<span id="<%= i %>"><%= i %>| </span><%    } %></pre>
+    <pre class="code"><code class="language-js"><%- src %></code></pre>
+    </div>
+    <script src="https://unpkg.com/@popperjs/core@2" integrity="sha384-W8fXfP3gkOKtndU4JGtKDvXbO53Wy8SZCQHczT5FMiiqmQfUpWbYdTil/SxwZgAN" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/tippy.js@6" integrity="sha384-vJRz16GTXNh0rYTtwJHOvYKAak1mFPGhLKTioEv5FQz+vxPy/UK77RAjCyUIHFGB" crossorigin="anonymous"></script>
+    <script src="<%= distPath %>main.js?v=<%= (new Date()).valueOf() %>"></script>
+    <script>
+      /*<!--*/
+      const t = (id, content) => tippy('#lsif' + id, {
+        content,
+        allowHTML: true,
+        delay: [500, 0],
+        interactive: true,
+        maxWidth: '80vw',
+        appendTo: document.body,
+        placement: 'bottom',
+      });
+      <% for (const x of hovers) { %>
+        t(<%= x.id %>, `<%- x.content %>`);
+      <% } %>
+      /*-->*/
+    </script>
+  </body>
+</html>

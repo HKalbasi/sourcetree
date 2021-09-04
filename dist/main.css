@@ -1,0 +1,58 @@
+pre {
+  display: inline-block;  
+}
+.line-numbers {
+  width: 5%;
+  text-align: right;
+}
+.code {
+  width: 85%;
+}
+:target {
+  color: yellow;
+  background-color: blue;
+}
+.button {
+  background-color: red;
+  color: white;
+  border-radius: 1rem;
+  padding: .5rem;
+  margin: .5rem;
+  text-decoration: none;
+}
+ul {
+  padding-left: 1rem;
+}
+.current-file {
+  background-color: yellowgreen;
+}
+#side-panel {
+  background-color: wheat;
+  display: flex;
+  flex-direction: column;
+}
+
+#main-panel {
+  max-height: 100vh;
+  overflow-y: scroll;
+  flex-grow: 1;
+}
+
+#side-panel-tabs {
+  display: flex;
+  flex-direction: row;
+}
+.side-panel-tabs-button {
+  flex-grow: 1;
+  padding: 1rem;
+  background-color: black;
+  color: white;
+  border: 5px solid black;
+  text-align: center;
+}
+.side-panel-tabs-button.enabled {
+  background-color: green;
+}
+.side-panel-tab {
+  margin: 1rem;
+}
