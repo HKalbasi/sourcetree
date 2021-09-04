@@ -16,6 +16,7 @@
     "highlight.js": "^11.2.0"
   },
   "devDependencies": {
+    "@sourcegraph/lsif-tsc": "^0.7.2",
     "@types/ejs": "^3.1.0",
     "@types/fs-extra": "^9.0.12",
     "ts-node": "^10.2.1",
