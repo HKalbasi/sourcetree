@@ -33,17 +33,22 @@ window.searchText = (x) => {
   updateSearchResult(x);
 };
 
-const buildSearchItem = (refs) => {
+const buildSearchItem = ({ references, definition }) => {
   const main = document.createElement('div');
-  const f = (x) => {
+  const f = (x, suffix) => {
     const root = document.createElement('a');
     root.href = x.url;
+    root.className = 'search-result';
+    const nam = document.createElement('div');
+    nam.innerText = `${x.filename}${suffix}`;
+    root.appendChild(nam);
     const pre = document.createElement('pre');
     pre.innerText = `${x.position.start.line + 1}| ${x.srcLine.trim()}`;
     root.appendChild(pre);
     return root;
   };
-  refs.map(f).forEach((x) => main.appendChild(x));
+  main.appendChild(f(definition, ' - definition'));
+  references.map((x) => f(x, '')).forEach((x) => main.appendChild(x));
   return main;
 };
 
@@ -53,7 +58,7 @@ const updateSearchResult = async (x) => {
   if (x.startsWith('#lsif')) {
     const { references } = await getLazyData();
     SR.innerText = '';
-    SR.appendChild(buildSearchItem(references[`x${x.slice(5)}`].references));
+    SR.appendChild(buildSearchItem(references[`x${x.slice(5)}`]));
   }
 }
 

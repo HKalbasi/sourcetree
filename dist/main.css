@@ -30,6 +30,7 @@ ul {
   background-color: wheat;
   display: flex;
   flex-direction: column;
+  height: 100vh;
 }
 
 #main-panel {
@@ -55,4 +56,13 @@ ul {
 }
 .side-panel-tab {
   margin: 1rem;
+}
+
+#panel-files {
+  overflow-y: scroll;
+}
+
+#panel-search {
+  overflow-x: scroll;
+  width: 25vw;
 }
