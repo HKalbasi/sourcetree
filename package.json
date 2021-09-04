@@ -1,15 +1,19 @@
 {
-  "name": "lsif_static",
-  "version": "1.0.0",
-  "description": "",
+  "name": "sourcetree-cli",
+  "version": "0.1.0",
+  "description": "View your sourcecode in browser like an ide",
   "main": "index.js",
   "scripts": {
     "dogfood": "npx lsif-tsc -p . -o dump.lsif && npx ts-node index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "HKalbasi",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/hkalbasi/sourcetree.git"
+  },
   "dependencies": {
     "ejs": "^3.1.6",
     "fs-extra": "^10.0.0",
