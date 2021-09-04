@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dogfood": "npx lsif-tsc -p . && npx ts-node index.ts",
+    "dogfood": "npx lsif-tsc -p . -o dump.lsif && npx ts-node index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
