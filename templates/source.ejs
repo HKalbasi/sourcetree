@@ -17,11 +17,12 @@
       </div>
     </div>
     <div id = "main-panel">
-    <pre class="line-numbers"><%
+    <pre id="line-numbers"><%
       const t = src.split('\n').length - 1;
-      for (let i = 1; i <= t; i += 1) { %>
-<span id="<%= i %>"><%= i %>| </span><%    } %></pre>
-    <pre class="code"><code class="language-js"><%- src %></code></pre>
+      for (let i = 1; i <= t; i += 1) { %><span id="<%= i %>"><%= i %>| </span>
+<%    } %>
+    </pre>
+    <pre id="code"><code class="language-js"><%- src %></code></pre>
     </div>
     <script src="https://unpkg.com/@popperjs/core@2" integrity="sha384-W8fXfP3gkOKtndU4JGtKDvXbO53Wy8SZCQHczT5FMiiqmQfUpWbYdTil/SxwZgAN" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/tippy.js@6" integrity="sha384-vJRz16GTXNh0rYTtwJHOvYKAak1mFPGhLKTioEv5FQz+vxPy/UK77RAjCyUIHFGB" crossorigin="anonymous"></script>

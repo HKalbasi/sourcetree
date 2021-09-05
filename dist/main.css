@@ -1,12 +1,9 @@
-pre {
-  display: inline-block;  
-}
-.line-numbers {
-  width: 5%;
+#line-numbers {
+  width: 6ch;
   text-align: right;
 }
-.code {
-  width: 85%;
+#code {
+  flex-grow: 1;
 }
 :target {
   color: yellow;
@@ -37,6 +34,7 @@ ul {
   max-height: 100vh;
   overflow-y: scroll;
   flex-grow: 1;
+  display: flex;
 }
 
 #side-panel-tabs {

@@ -1,3 +1,12 @@
+import { dirname } from "path";
+import { mkdir, writeFile } from "fs/promises";
+
+export const myWriteFile = async (path: string, content: string) => {
+  const folder = dirname(path);
+  await mkdir(folder, { recursive: true });
+  await writeFile(path, content);
+};
+
 export type Addition = {
   position: {
     line: number;

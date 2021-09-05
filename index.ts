@@ -2,11 +2,12 @@ import { writeFile, readFile, rm, mkdir } from "fs/promises";
 import { dirname, join, relative } from "path";
 import ejs from "ejs";
 import hljs from "highlight.js";
-import { putInSrc, Addition } from "./util";
+import { putInSrc, Addition, myWriteFile } from "./util";
 import fsExtra from "fs-extra";
 import { distFolder } from "./paths";
 import { lsifParser, Lsif } from "./lsif";
 import { buildTree, TreeNode } from "./tree";
+import { templatesBuilder } from "./templates/index";
 
 function unwrap<T>(x: T | undefined) {
   if (x === undefined) throw new Error('unwrap failed');
@@ -90,12 +91,18 @@ type References = {
 const main = async () => {
   const lsif = await lsifParser("dump.lsif");
   const { map, outVMap, projectRoot, documents, srcMap } = lsif;
-  const template = ejs.compile((await readFile("template.html")).toString());
+  const templates = await templatesBuilder();
   const outputPath = "out";
-  await rm(outputPath, { recursive: true, force: true });
-  await mkdir(outputPath, { recursive: true });
-  await fsExtra.copy(distFolder, join(outputPath, '$dist'));
   const fileTree = buildTree(projectRoot, documents.map((x) => x.uri));
+  await rm(outputPath, { recursive: true, force: true });
+  await myWriteFile(
+    join(outputPath, 'index.html'),
+    templates.welcome({
+      tree: treeToHtml(fileTree, projectRoot, join(projectRoot, 'never$#.gav')),
+    }),
+  );
+  await fsExtra.copy(distFolder, join(outputPath, '$dist'));
+  await myWriteFile(join(outputPath, '.nojekyll'), '');
   const lsifParsed = documents
     .filter((doc) => doc.uri.startsWith(projectRoot))
     .map((doc) => {
@@ -181,17 +188,15 @@ const main = async () => {
     const srcHighlighted = hljs.highlight(srcRaw, { language: doc.languageId }).value;
     const src = putInSrc(srcHighlighted, additions);
     const destPath = join(outputPath, relPath);
-    const destFolder = dirname(destPath);
-    await mkdir(destFolder, { recursive: true });
-    await writeFile(
+    await myWriteFile(
       destPath + ".html",
-      template({
+      templates.source({
         src, hovers,
         tree: treeToHtml(fileTree, projectRoot, doc.uri),
         distPath: `${'../'.repeat(depth)}$dist/`,
       }),
     );
-    await writeFile(destPath + ".lazy.json", JSON.stringify({ references }));
+    await myWriteFile(destPath + ".lazy.json", JSON.stringify({ references }));
   }));
 };
 
