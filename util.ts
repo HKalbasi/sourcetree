@@ -44,6 +44,7 @@ export const putInSrc = (highlight: string, additions: Addition[]) => {
         //console.log(i, j, a);
       }
       j += 1;
+      if (hline == '') break;
       if (hline[0] == '&') {
         while (hline[0] != ';') {
           result += hline[0];

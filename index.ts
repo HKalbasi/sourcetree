@@ -25,6 +25,7 @@ const myRelative = (path1: string, path2: string) => {
   return `./${'../'.repeat(k1.length - 1)}${k2.join('/')}`;
 };
 
+//FIXME: remove it completely. It makes map<U> an underline.
 const htmlOfContent = (uri: string, v: any, content: any[], goto: any, ref: any) => {
   if (!content) content = [];
   const buttons = [
@@ -88,21 +89,25 @@ type References = {
   };
 };
 
-const main = async () => {
-  const lsif = await lsifParser("dump.lsif");
+export type CliOptions = {
+  input: string,
+  output: string,
+};
+
+export const main = async ({ input, output }: CliOptions) => {
+  const lsif = await lsifParser(input);
   const { map, outVMap, projectRoot, documents, srcMap } = lsif;
   const templates = await templatesBuilder();
-  const outputPath = "out";
   const fileTree = buildTree(projectRoot, documents.map((x) => x.uri));
-  await rm(outputPath, { recursive: true, force: true });
+  await rm(output, { recursive: true, force: true });
   await myWriteFile(
-    join(outputPath, 'index.html'),
+    join(output, 'index.html'),
     templates.welcome({
       tree: treeToHtml(fileTree, projectRoot, join(projectRoot, 'never$#.gav')),
     }),
   );
-  await fsExtra.copy(distFolder, join(outputPath, '$dist'));
-  await myWriteFile(join(outputPath, '.nojekyll'), '');
+  await fsExtra.copy(distFolder, join(output, '$dist'));
+  await myWriteFile(join(output, '.nojekyll'), '');
   const lsifParsed = documents
     .filter((doc) => doc.uri.startsWith(projectRoot))
     .map((doc) => {
@@ -187,7 +192,7 @@ const main = async () => {
     const relPath = relative(projectRoot, doc.uri);
     const srcHighlighted = hljs.highlight(srcRaw, { language: doc.languageId }).value;
     const src = putInSrc(srcHighlighted, additions);
-    const destPath = join(outputPath, relPath);
+    const destPath = join(output, relPath);
     await myWriteFile(
       destPath + ".html",
       templates.source({
@@ -199,5 +204,3 @@ const main = async () => {
     await myWriteFile(destPath + ".lazy.json", JSON.stringify({ references }));
   }));
 };
-
-main();
