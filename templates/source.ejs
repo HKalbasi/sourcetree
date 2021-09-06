@@ -18,7 +18,7 @@
     </div>
     <div id = "main-panel">
     <pre id="line-numbers"><%
-      const t = src.split('\n').length - 1;
+      const t = src.split('\n').length;
       for (let i = 1; i <= t; i += 1) { %><span id="<%= i %>"><%= i %>| </span>
 <%    } %>
     </pre>
