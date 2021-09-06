@@ -19,6 +19,13 @@ export const putInSrc = (highlight: string, additions: Addition[]) => {
   const highByLine = highlight.split('\n');
   const key = (i: any, j: any) => `${i},${j}`;
   const additionMap = new Map();
+  const addsInPlace = (i: number, j: number) => {
+    const a = additionMap.get(key(i, j));
+    if (a) {
+      return a.join('');
+    }
+    return '';
+  };
   additions.forEach((add) => {
     const p = add.position;
     const k = key(p.line, p.character);
@@ -38,11 +45,7 @@ export const putInSrc = (highlight: string, additions: Addition[]) => {
         result += hline[0];
         hline = hline.slice(1);
       }
-      const a = additionMap.get(key(i, j));
-      if (a) {
-        result += a.join('');
-        //console.log(i, j, a);
-      }
+      result += addsInPlace(i, j);
       j += 1;
       if (hline == '') break;
       if (hline[0] == '&') {
@@ -54,6 +57,7 @@ export const putInSrc = (highlight: string, additions: Addition[]) => {
       result += hline[0];
       hline = hline.slice(1);
     }
+    result += addsInPlace(i, j);
     return result;
   }).join('\n');
 };
