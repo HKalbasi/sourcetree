@@ -28,6 +28,7 @@ jobs:
       - name: Build sourcetree output
         run: |
           npm install --save-dev
+          npm run build
           npm run dogfood
       
       # Runs a set of commands using the runners shell
