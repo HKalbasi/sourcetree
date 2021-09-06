@@ -7,7 +7,8 @@
     "sourcetree": "./typescript-output/cli.js"
   },
   "scripts": {
-    "dogfood": "npx lsif-tsc -p . -o dump.lsif && npx ts-node index.ts",
+    "build": "npx tsc",
+    "dogfood": "npx lsif-tsc -p . -o dump.lsif && node typescript-output/cli.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -18,22 +19,15 @@
     "url": "git://github.com/hkalbasi/sourcetree.git"
   },
   "dependencies": {
-    "@types/omelette": "^0.4.1",
-    "@types/yargs": "^17.0.2",
     "commander": "^8.1.0",
     "ejs": "^3.1.6",
     "fs-extra": "^10.0.0",
-    "highlight.js": "^11.2.0",
-    "omelette": "^0.4.15-1",
-    "yargs": "^17.1.1"
+    "highlight.js": "^11.2.0"
   },
   "devDependencies": {
     "@sourcegraph/lsif-tsc": "^0.7.2",
-    "@swc/cli": "^0.1.49",
-    "@swc/core": "^1.2.84",
     "@types/ejs": "^3.1.0",
     "@types/fs-extra": "^9.0.12",
-    "ts-node": "^10.2.1",
     "typescript": "^4.4.2"
   }
 }
