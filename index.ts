@@ -1,6 +1,5 @@
-import { writeFile, readFile, rm, mkdir } from "fs/promises";
-import { dirname, join, relative } from "path";
-import ejs from "ejs";
+import { rm } from "fs/promises";
+import { join, relative } from "path";
 import hljs from "highlight.js";
 import { putInSrc, Addition, myWriteFile } from "./util";
 import fsExtra from "fs-extra";
@@ -8,6 +7,7 @@ import { distFolder } from "./paths";
 import { lsifParser, Lsif } from "./lsif";
 import { buildTree, TreeNode } from "./tree";
 import { templatesBuilder } from "./templates/index";
+import { start } from "./debug/bench";
 
 function unwrap<T>(x: T | undefined) {
   if (x === undefined) throw new Error('unwrap failed');
@@ -23,21 +23,6 @@ const myRelative = (path1: string, path2: string) => {
   const k1 = s1.slice(i);
   const k2 = s2.slice(i);
   return `./${'../'.repeat(k1.length - 1)}${k2.join('/')}`;
-};
-
-//FIXME: remove it completely. It makes map<U> an underline.
-const htmlOfContent = (uri: string, v: any, content: any[], goto: any, ref: any) => {
-  if (!content) content = [];
-  const buttons = [
-    goto ? `<a href="${goto}" class="button">Go to definition</a>` : '',
-    ref ? `<a onclick="searchText('#lsif${v.id}')" class="button">Find all references</a>` : '',
-  ];
-  return `<div style="white-space:normal">${content.map((c) => {
-    if (typeof c === 'string') return `<p>${c}</p>`;
-    if (c.language) {
-      return `<pre>${c.value}</pre>`;
-    }
-  }).join('')}<div>${buttons.join('')}</div></div>`;
 };
 
 const treeToHtml = (tree: TreeNode[], projectRoot: string, uri: string) => {
@@ -76,10 +61,12 @@ const getItemData = (item: any, lsif: Lsif, currentUri: string): ItemData => {
   return { filename, url, position, srcLine };
 };
 
-const escapeBacktick = (x: string) => x.replaceAll('`', '\\`').replaceAll('${', '\\${');
-
-type Hover = {
-
+type Hovers = {
+  [s: string]: {
+    content: any;
+    definition?: string;
+    references: boolean;
+  };
 };
 
 type References = {
@@ -89,12 +76,13 @@ type References = {
   };
 };
 
-export type CliOptions = {
-  input: string,
-  output: string,
+type MainOptions = {
+  input: string;
+  output: string;
 };
 
-export const main = async ({ input, output }: CliOptions) => {
+export const main = async ({ input, output }: MainOptions) => {
+  let bench = start('Reading files and cleaning');
   const lsif = await lsifParser(input);
   const { map, outVMap, projectRoot, documents, srcMap } = lsif;
   const templates = await templatesBuilder();
@@ -108,11 +96,13 @@ export const main = async ({ input, output }: CliOptions) => {
   );
   await fsExtra.copy(distFolder, join(output, '$dist'));
   await myWriteFile(join(output, '.nojekyll'), '');
+  bench.end();
+  bench = start('Parsing lsif dump');
   const lsifParsed = documents
     .filter((doc) => doc.uri.startsWith(projectRoot))
     .map((doc) => {
       const additions: Addition[] = [];
-      const hovers: Hover[] = [];
+      const hovers: Hovers = {};
       const references: References = {};
       unwrap(outVMap.get(doc.id)).forEach((edge) => {
         if (edge.label != 'contains') {
@@ -133,9 +123,9 @@ export const main = async ({ input, output }: CliOptions) => {
             position: v.end,
             text: '</span>',
           });
-          let hoverContent = null;
-          let definitionPlace = null;
-          let ref = null;
+          let hoverContent = undefined;
+          let definitionPlace = undefined;
+          let ref = undefined;
           for (const query of unwrap(outVMap.get(resultSet.id))) {
             if (query.label == 'textDocument/definition') {
               const defResult = map.get(query.inV);
@@ -163,7 +153,6 @@ export const main = async ({ input, output }: CliOptions) => {
               ref = {
                 definition: getItemData(defItem, lsif, doc.uri),
                 references: refEdge.flatMap((e) => {
-                  const goalDoc = map.get(e.document);
                   return e.inVs.map((x: string) => map.get(x)).map((defItem: string) => {
                     return getItemData(defItem, lsif, doc.uri);
                   });
@@ -172,12 +161,11 @@ export const main = async ({ input, output }: CliOptions) => {
             }
           }
           if (hoverContent || definitionPlace) {
-            hovers.push({
-              id: v.id,
-              content: escapeBacktick(htmlOfContent(
-                doc.uri, v, hoverContent, definitionPlace, ref
-              )), 
-            });
+            hovers[`x${v.id}`] = {
+              content: hoverContent,
+              definition: definitionPlace,
+              references: ref !== undefined,
+            };
           }
           if (ref) {
             references[`x${v.id}`] = ref;
@@ -186,21 +174,38 @@ export const main = async ({ input, output }: CliOptions) => {
       });
       return { doc, additions, hovers, references };
     });
-  await Promise.all(lsifParsed.map(async ({ doc, additions, hovers, references }) => {
-    const srcRaw = unwrap(srcMap.raw.get(doc.uri));
+  bench.end();
+  bench = start('Syntax highlighting');
+  const highlighted = lsifParsed.map((x) => {
+    const srcRaw = unwrap(srcMap.raw.get(x.doc.uri));
+    const highlighted = hljs.highlight(srcRaw, { language: x.doc.languageId }).value;
+    return { ...x, highlighted };
+  });
+  bench.end();
+  bench = start('Adding additions');
+  const added = highlighted.map(({ doc, additions, hovers, references, highlighted }) => {
+    const src = putInSrc(highlighted, additions);
+    return { doc, hovers, references, src };
+  });
+  bench.end();
+  bench = start('Templating with EJS');
+  const generated = added.map(({ doc, hovers, references, src }) => {
     const depth = doc.uri.slice(projectRoot.length).split('/').length - 2;
+    const html = templates.source({
+      src,
+      tree: treeToHtml(fileTree, projectRoot, doc.uri),
+      distPath: `${'../'.repeat(depth)}$dist/`,
+    });
+    return { doc, html, hovers, references };
+  });
+  bench.end();
+  bench = start('Writing generated files');
+  await Promise.all(generated.map(async ({ doc, html, hovers, references }) => {
     const relPath = relative(projectRoot, doc.uri);
-    const srcHighlighted = hljs.highlight(srcRaw, { language: doc.languageId }).value;
-    const src = putInSrc(srcHighlighted, additions);
     const destPath = join(output, relPath);
-    await myWriteFile(
-      destPath + ".html",
-      templates.source({
-        src, hovers,
-        tree: treeToHtml(fileTree, projectRoot, doc.uri),
-        distPath: `${'../'.repeat(depth)}$dist/`,
-      }),
-    );
-    await myWriteFile(destPath + ".lazy.json", JSON.stringify({ references }));
+    await myWriteFile(destPath + ".html", html);
+    await myWriteFile(destPath + ".ref.json", JSON.stringify({ references }));
+    await myWriteFile(destPath + ".hover.json", JSON.stringify({ hovers }));
   }));
+  bench.end();
 };

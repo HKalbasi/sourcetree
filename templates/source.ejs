@@ -27,20 +27,5 @@
     <script src="https://unpkg.com/@popperjs/core@2" integrity="sha384-W8fXfP3gkOKtndU4JGtKDvXbO53Wy8SZCQHczT5FMiiqmQfUpWbYdTil/SxwZgAN" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/tippy.js@6" integrity="sha384-vJRz16GTXNh0rYTtwJHOvYKAak1mFPGhLKTioEv5FQz+vxPy/UK77RAjCyUIHFGB" crossorigin="anonymous"></script>
     <script src="<%= distPath %>main.js?v=<%= (new Date()).valueOf() %>"></script>
-    <script>
-      /*<!--*/
-      const t = (id, content) => tippy('#lsif' + id, {
-        content,
-        allowHTML: true,
-        delay: [500, 0],
-        interactive: true,
-        maxWidth: '80vw',
-        appendTo: document.body,
-      });
-      <% for (const x of hovers) { %>
-        t(<%= x.id %>, `<%- x.content %>`);
-      <% } %>
-      /*-->*/
-    </script>
   </body>
 </html>

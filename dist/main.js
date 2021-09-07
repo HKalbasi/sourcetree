@@ -5,7 +5,7 @@ const getLazyData = async () => {
     return lazyData;
   }
   const filename = location.pathname.split('/').slice(-1)[0];
-  const res = await fetch(`./${filename.slice(0, -5)}.lazy.json?v=${(new Date).valueOf()}`);
+  const res = await fetch(`./${filename.slice(0, -5)}.ref.json?v=${(new Date).valueOf()}`);
   return res.json();
 };
 
@@ -65,3 +65,54 @@ const updateSearchResult = async (x) => {
 document.getElementById('search-input').oninput = (e) => {
   alert(e);
 };
+
+const buildHovers = async () => {
+  const filename = location.pathname.split('/').slice(-1)[0];
+  const res = await fetch(`./${filename.slice(0, -5)}.hover.json?v=${(new Date).valueOf()}`);
+  const { hovers } = await res.json();
+  Object.keys(hovers).map((x) => ({
+    id: x.slice(1), value: hovers[x],
+  })).forEach(({ id, value }) => {
+    const root = document.createElement('div');
+    const text = document.createElement('div');
+    (value.content || []).map((c) => {
+      if (typeof c === 'string') {
+        const r = document.createElement('p');
+        r.innerText = c;
+        return r;
+      }
+      if (c.language) {
+        const r = document.createElement('pre');
+        r.innerText = c.value;
+        return r;
+      }
+    }).forEach((x) => text.appendChild(x));
+    root.appendChild(text);
+    const buttons = document.createElement('div');
+    if (value.definition) {
+      const b = document.createElement('a');
+      b.href = value.definition;
+      b.className = 'button';
+      b.innerText = 'Go to definition';
+      buttons.appendChild(b);
+    }
+    if (value.references) {
+      const b = document.createElement('a');
+      b.onclick = () => searchText(`#lsif${id}`);
+      b.className = 'button';
+      b.innerText = 'Find all references';
+      buttons.appendChild(b);
+    }
+    root.appendChild(buttons);
+    tippy('#lsif' + id, {
+      content: root,
+      allowHTML: true,
+      delay: [500, 0],
+      interactive: true,
+      maxWidth: '80vw',
+      appendTo: document.body,
+    });
+  });
+};
+
+buildHovers();
