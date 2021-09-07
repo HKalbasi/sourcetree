@@ -16,7 +16,6 @@ export type Addition = {
 };
 
 export const putInSrc = (highlight: string, additions: Addition[]) => {
-  const highByLine = highlight.split('\n');
   const key = (i: any, j: any) => `${i},${j}`;
   const additionMap = new Map();
   const addsInPlace = (i: number, j: number) => {
@@ -33,31 +32,39 @@ export const putInSrc = (highlight: string, additions: Addition[]) => {
     additionMap.set(k, cur);
     cur.push(add.text);
   });
-  return highByLine.map((hline, i) => {
-    let result = "";
-    let j = 0;
-    while (hline != "") {
-      while (hline[0] == '<') {
-        while (hline[0] != '>') {
-          result += hline[0];
-          hline = hline.slice(1);
-        }
-        result += hline[0];
-        hline = hline.slice(1);
+  let result = "";
+  let i = 0;
+  let j = 0;
+  let hline = highlight;
+  let p = 0;
+  while (p < hline.length) {
+    while (hline[p] == '<') {
+      while (hline[p] != '>') {
+        result += hline[p];
+        p += 1;
       }
-      result += addsInPlace(i, j);
-      j += 1;
-      if (hline == '') break;
-      if (hline[0] == '&') {
-        while (hline[0] != ';') {
-          result += hline[0];
-          hline = hline.slice(1);
-        }
-      }
-      result += hline[0];
-      hline = hline.slice(1);
+      result += hline[p];
+      p += 1;
     }
     result += addsInPlace(i, j);
-    return result;
-  }).join('\n');
+    j += 1;
+    if (p >= hline.length) break;
+    if (hline[p] == '\n') {
+      result += hline[p];
+      p += 1;
+      j = 0;
+      i += 1;
+      continue;  
+    }
+    if (hline[p] == '&') {
+      while (hline[p] != ';') {
+        result += hline[p];
+        p += 1;
+      }
+    }
+    result += hline[p];
+    p += 1;
+  }
+  result += addsInPlace(i, j);
+  return result;
 };
