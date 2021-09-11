@@ -22,12 +22,14 @@
     "commander": "^8.1.0",
     "ejs": "^3.1.6",
     "fs-extra": "^10.0.0",
-    "highlight.js": "^11.2.0"
+    "highlight.js": "^11.2.0",
+    "markdown-it": "^12.2.0"
   },
   "devDependencies": {
     "@sourcegraph/lsif-tsc": "^0.7.2",
     "@types/ejs": "^3.1.0",
     "@types/fs-extra": "^9.0.12",
+    "@types/markdown-it": "^12.2.1",
     "typescript": "^4.4.2"
   }
 }

@@ -1,10 +1,12 @@
 import { readFile } from "fs/promises";
 
+export type LsifId = number | string;
+
 export type Lsif = {
   items: any[];
-  map: Map<string, any>;
-  inVMap: Map<string, any[]>;
-  outVMap: Map<string, any[]>;
+  map: Map<LsifId, any>;
+  inVMap: Map<LsifId, any[]>;
+  outVMap: Map<LsifId, any[]>;
   projectRoot: string;
   documents: any[];
   srcMap: {
@@ -27,7 +29,7 @@ const getEdgeWithLabel = (a: any[], label: string) =>
   a.filter((x) => x.type == "edge" && x.label == label);
 
 const buildItemMap = (items: any[]) => {
-  const result: Map<string, any> = new Map();
+  const result: Map<LsifId, any> = new Map();
   items.forEach((item) => {
     result.set(item.id, item);
   });
@@ -35,7 +37,7 @@ const buildItemMap = (items: any[]) => {
 };
 
 const buildInVMap = (items: any[]) => {
-  const result: Map<string, any[]> = new Map();
+  const result: Map<LsifId, any[]> = new Map();
   const insert = (x: any, id: string) => {
     let cur = result.get(id) ?? [];
     result.set(id, cur);
@@ -53,7 +55,7 @@ const buildInVMap = (items: any[]) => {
 
 
 const buildOutVMap = (items: any[]) => {
-  const result: Map<string, any[]> = new Map();
+  const result: Map<LsifId, any[]> = new Map();
   items.forEach((item) => {
     if (item.type != 'edge' || !item.outV) {
       return;
@@ -88,4 +90,17 @@ export const lsifParser = async (address: string): Promise<Lsif> => {
   return {
     items, map, inVMap, outVMap, projectRoot, documents, srcMap,
   };
+};
+
+export const findRecursiveEdge = (lsif: Lsif, v: LsifId, label: string) => {
+  const { outVMap, map } = lsif;
+  for (;;) {
+    const out = outVMap.get(v);
+    if (!out) return;
+    const direct = getEdgeWithLabel(out, label);
+    if (direct.length > 0) return map.get(direct[0].inV);
+    const next = getEdgeWithLabel(out, 'next');
+    if (next.length == 0) return;
+    v = next[0].inV;
+  }
 };

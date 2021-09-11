@@ -74,21 +74,29 @@ const buildHovers = async () => {
     id: x.slice(1), value: hovers[x],
   })).forEach(({ id, value }) => {
     const root = document.createElement('div');
-    const text = document.createElement('div');
-    (value.content || []).map((c) => {
-      if (typeof c === 'string') {
-        const r = document.createElement('p');
-        r.innerText = c;
-        return r;
+    root.className = 'hover-root';
+    if (value.content) {
+      const text = document.createElement('div');
+      if (value.content.kind == "markdown") {
+        text.innerHTML = value.content.value;
+      } else {
+        (value.content || []).map((c) => {
+          if (typeof c === 'string') {
+            const r = document.createElement('p');
+            r.innerText = c;
+            return r;
+          }
+          if (c.language) {
+            const r = document.createElement('pre');
+            r.innerText = c.value;
+            return r;
+          }
+        }).forEach((x) => text.appendChild(x));  
       }
-      if (c.language) {
-        const r = document.createElement('pre');
-        r.innerText = c.value;
-        return r;
-      }
-    }).forEach((x) => text.appendChild(x));
-    root.appendChild(text);
+      root.appendChild(text);
+    }
     const buttons = document.createElement('div');
+    buttons.className = 'button-holder';
     if (value.definition) {
       const b = document.createElement('a');
       b.href = value.definition;
@@ -107,7 +115,7 @@ const buildHovers = async () => {
     tippy('#lsif' + id, {
       content: root,
       allowHTML: true,
-      delay: [500, 0],
+      delay: [200, 0],
       interactive: true,
       maxWidth: '80vw',
       appendTo: document.body,

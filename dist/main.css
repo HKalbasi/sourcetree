@@ -9,14 +9,6 @@
   color: yellow;
   background-color: blue;
 }
-.button {
-  background-color: red;
-  color: white;
-  border-radius: 1rem;
-  padding: .5rem;
-  margin: .5rem;
-  text-decoration: none;
-}
 ul {
   padding-left: 1rem;
 }
@@ -31,6 +23,8 @@ ul {
 }
 
 #main-panel {
+  background-color: #1e1e1e;
+  color: white;
   max-height: 100vh;
   overflow-y: scroll;
   flex-grow: 1;
@@ -63,4 +57,30 @@ ul {
 #panel-search {
   overflow-x: scroll;
   width: 25vw;
+}
+
+.hover-root {
+  max-height: 40vh;
+  overflow-y: auto;
+}
+
+.hover-root pre, .hover-root p, .hover-root h1 {
+  margin: 0.25em 0;
+}
+
+.hover-root a {
+  color: aqua;
+}
+
+.button {
+  background-color: red;
+  color: white;
+  border-radius: 1rem;
+  padding: .5rem;
+  margin: .5rem;
+  text-decoration: none;
+}
+
+.button-holder {
+  padding: .5rem;
 }
