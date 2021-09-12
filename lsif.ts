@@ -1,5 +1,5 @@
 import { readFile } from "fs/promises";
-import { Vertex, Edge, Id, Document } from "lsif-protocol";
+import { MetaData, Vertex, Edge, Id, Document, next } from "lsif-protocol";
 
 export type Element = Vertex | Edge;
 
@@ -28,11 +28,11 @@ const parseMultiLineJs = (a: string) =>
     .filter((x) => x != "")
     .map((x) => JSON.parse(x));
 
-const getVertexWithLabel = (a: any[], label: string) =>
+const getVertexWithLabel = (a: Element[], label: string) =>
   a.filter((x) => x.type == "vertex" && x.label == label);
 
-const getEdgeWithLabel = (a: any[], label: string) =>
-  a.filter((x) => x.type == "edge" && x.label == label);
+const getEdgeWithLabel = (a: Element[], label: string) =>
+  a.filter((x) => x.type == "edge" && x.label == label) as Edge[];
 
 const buildItemMap = (items: Element[]) => {
   const result: Map<Id, Element> = new Map();
@@ -43,18 +43,18 @@ const buildItemMap = (items: Element[]) => {
 };
 
 const buildInVMap = (items: Element[]) => {
-  const result: Map<Id, any[]> = new Map();
-  const insert = (x: any, id: string) => {
+  const result: Map<Id, Element[]> = new Map();
+  const insert = (x: Element, id: Id) => {
     let cur = result.get(id) ?? [];
     result.set(id, cur);
     cur.push(x);
   };
-  items.forEach((item: any) => {
+  items.forEach((item: Element) => {
     if (item.type != 'edge') {
       return;
     }
-    if (item.inV) insert(item, item.inV);
-    if (item.inVs) item.inVs.forEach((id: string) => insert(item, id));
+    if ('inV' in item) insert(item, item.inV);
+    if ('inVs' in item) item.inVs.forEach((id: Id) => insert(item, id));
   });
   return result;
 };
@@ -84,7 +84,7 @@ function getFromMap<A, B>(map: Map<A, B>): SafeMap<A, B> {
   };
 }
 
-const buildSrcMap = async (documents: any[]) => {
+const buildSrcMap = async (documents: Document[]) => {
   const raw: Map<string, string> = new Map();
   const lineSplitted: Map<string, string[]> = new Map();
   await Promise.all(documents.map(async (doc) => {
@@ -101,8 +101,8 @@ export const lsifParser = async (address: string): Promise<Lsif> => {
   const item = getFromMap(buildItemMap(items));
   const inV = getFromMap(buildInVMap(items));
   const outV = getFromMap(buildOutVMap(items));
-  const { projectRoot } = getVertexWithLabel(items, "metaData")[0];
-  const documents = getVertexWithLabel(items, "document");
+  const { projectRoot } = getVertexWithLabel(items, "metaData")[0] as MetaData;
+  const documents = getVertexWithLabel(items, "document") as Document[];
   const srcMap = await buildSrcMap(documents);
   return {
     items, item, inV, outV, projectRoot, documents, srcMap,
@@ -114,9 +114,9 @@ export const findRecursiveEdge = (lsif: Lsif, v: Id, label: string) => {
   for (; ;) {
     if (!outV.have(v)) return;
     const out = outV.get(v);
-    const direct = getEdgeWithLabel(out, label);
+    const direct = getEdgeWithLabel(out, label).filter(Edge.is11);
     if (direct.length > 0) return item.get(direct[0].inV);
-    const next = getEdgeWithLabel(out, 'next');
+    const next = getEdgeWithLabel(out, 'next') as next[];
     if (next.length == 0) return;
     v = next[0].inV;
   }

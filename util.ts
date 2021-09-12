@@ -16,7 +16,7 @@ export type Addition = {
 };
 
 export const putInSrc = (highlight: string, additions: Addition[]) => {
-  const key = (i: any, j: any) => `${i},${j}`;
+  const key = (i: number, j: number) => `${i},${j}`;
   const additionMap = new Map();
   const addsInPlace = (i: number, j: number) => {
     const a = additionMap.get(key(i, j));

@@ -10,7 +10,7 @@ import { templatesBuilder } from "./templates/index";
 import { start } from "./debug/bench";
 import MarkdownIt from "markdown-it";
 import { contains, Document, item, ItemEdge, ReferenceResult, Range, Id, HoverResult } from "lsif-protocol";
-import { MarkupContent, MarkedString } from "vscode-languageserver-protocol";
+import { MarkupContent, MarkedString, Position } from "vscode-languageserver-protocol";
 import { HtmlValidate } from "html-validate";
 import { isEnabled } from "./debug/flags";
 
@@ -54,7 +54,10 @@ const treeToHtml = (tree: TreeNode[], projectRoot: string, uri: string) => {
 type ItemData = {
   filename: string;
   url: string;
-  position: any;
+  position: {
+    start: Position;
+    end: Position;
+  };
   srcLine: string;
 };
 
@@ -62,7 +65,7 @@ const isContains = (x: Element): x is contains => {
   return x.label == 'contains';
 };
 
-const getItemData = (item: any, lsif: Lsif, currentUri: string): ItemData => {
+const getItemData = (item: Range, lsif: Lsif, currentUri: string): ItemData => {
   const position = {
     start: item.start,
     end: item.end,
@@ -79,7 +82,7 @@ const getItemData = (item: any, lsif: Lsif, currentUri: string): ItemData => {
 
 type Hovers = {
   [s: string]: {
-    content: any;
+    content?: string;
     definition?: string;
     references: boolean;
   };
@@ -168,7 +171,7 @@ export const main = async ({ input, output }: MainOptions) => {
           const defVertex = findRecursiveEdge(lsif, v.id, 'textDocument/definition');
           if (defVertex) {
             const defItemEdge = outV.get(defVertex.id)[0] as item;
-            const defItem = item.get(defItemEdge.inVs[0]);
+            const defItem = item.get(defItemEdge.inVs[0]) as Range;
             if (defItem.id != v.id) {
               definitionPlace = getItemData(defItem, lsif, doc.uri).url;
             }
@@ -182,13 +185,13 @@ export const main = async ({ input, output }: MainOptions) => {
             const edge = outV.get(refVertex.id) as ItemEdge<ReferenceResult, Range>[];
             const defEdge = edge.filter((x) => x.property === 'definitions');
             if (defEdge.length == 0) continue;
-            const defItem = item.get(defEdge[0].inVs[0]);
+            const defItem = item.get(defEdge[0].inVs[0]) as Range;
             const refEdge = edge.filter((x) => x.property !== 'definitions');
             ref = {
               definition: getItemData(defItem, lsif, doc.uri),
               references: refEdge.flatMap((e) => {
                 return e.inVs.map((x: Id) => item.get(x)).map((defItem: Element) => {
-                  return getItemData(defItem, lsif, doc.uri);
+                  return getItemData(defItem as Range, lsif, doc.uri);
                 });
               })
             };
