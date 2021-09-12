@@ -98,6 +98,7 @@ type References = {
 type MainOptions = {
   input: string;
   output: string;
+  dist?: string;
 };
 
 const markedStringToHtml = (x: MarkedString) => {
@@ -125,7 +126,7 @@ const hoverToHtml = (hover: MarkupContent | MarkedString | MarkedString[]) => {
 
 const htmlValidate = new HtmlValidate();
 
-export const main = async ({ input, output }: MainOptions) => {
+export const main = async ({ input, output, dist }: MainOptions) => {
   let bench = start('Reading files and cleaning');
   const lsif = await lsifParser(input);
   const { item, projectRoot, documents, srcMap, outV } = lsif;
@@ -138,7 +139,7 @@ export const main = async ({ input, output }: MainOptions) => {
       tree: treeToHtml(fileTree, projectRoot, join(projectRoot, 'never$#.gav')),
     }),
   );
-  await fsExtra.copy(distFolder, join(output, '$dist'));
+  await fsExtra.copy(distFolder, join(output, '_dist'));
   await myWriteFile(join(output, '.nojekyll'), '');
   bench.end();
   bench = start('Parsing lsif dump');
@@ -230,7 +231,7 @@ export const main = async ({ input, output }: MainOptions) => {
     const html = templates.source({
       src,
       tree: treeToHtml(fileTree, projectRoot, doc.uri),
-      distPath: `${'../'.repeat(depth)}$dist/`,
+      distPath: dist ? dist : `${'../'.repeat(depth)}_dist/`,
     });
     return { doc, html, hovers, references };
   });

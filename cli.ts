@@ -7,12 +7,14 @@ import { main } from "./index";
 program
   .option('-i, --input <file>', 'lsif dump path', 'dump.lsif')
   .option('-o, --output <file>', 'output folder for generated files', 'out')
+  .option('--dist <path>', 'customized absolute path to assets')
   .option('--bench', 'enable benchmarking logs')
   .option('--check', 'enable integrity checking');
 
 export type CliOptions = {
   input: string;
   output: string;
+  dist?: string;
   bench: boolean;
   check: boolean;
 };
