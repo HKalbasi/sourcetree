@@ -5,7 +5,7 @@
 #code {
   flex-grow: 1;
 }
-:target {
+.selected {
   color: yellow;
   background-color: blue;
 }

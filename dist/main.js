@@ -109,3 +109,43 @@ const buildHovers = async () => {
 };
 
 buildHovers();
+
+let clearLineColor = () => { };
+
+const hashManager = (hash) => {
+  clearLineColor();
+  const h = hash.slice(1);
+  if (h === '') {
+    clearLineColor = () => { };
+    return;
+  }
+  const splitted = h.split('-');
+  if (splitted.length === 1) {
+    const element = document.getElementById(h);
+    element.classList.add('selected');
+    element.scrollIntoView();
+    clearLineColor = () => {
+      element.classList.remove('selected');  
+    };
+    return;
+  }
+  const [start, end] = splitted;
+  const element = document.getElementById(start);
+  element.scrollIntoView();
+  for (let i = Number(start); i <= Number(end); i += 1) {
+    const element = document.getElementById("" + i);
+    element.classList.add('selected');
+  }
+  clearLineColor = () => {
+    for (let i = Number(start); i <= Number(end); i += 1) {
+      const element = document.getElementById("" + i);
+      element.classList.remove('selected');
+    }
+  }
+};
+
+hashManager(window.location.hash);
+
+window.addEventListener('hashchange', () => {
+  hashManager(window.location.hash);
+});
