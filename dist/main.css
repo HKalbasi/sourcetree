@@ -72,7 +72,7 @@ ul {
   color: aqua;
 }
 
-.button {
+a.button {
   background-color: red;
   color: white;
   border-radius: 1rem;
