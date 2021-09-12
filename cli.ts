@@ -7,12 +7,14 @@ import { main } from "./index";
 program
   .option('-i, --input <file>', 'lsif dump path', 'dump.lsif')
   .option('-o, --output <file>', 'output folder for generated files', 'out')
-  .option('--bench', 'enable benchmarking logs');
+  .option('--bench', 'enable benchmarking logs')
+  .option('--check', 'enable integrity checking');
 
 export type CliOptions = {
   input: string;
   output: string;
   bench: boolean;
+  check: boolean;
 };
 
 const cli = async () => {
@@ -20,6 +22,7 @@ const cli = async () => {
   program.parse(process.argv);
   const options: CliOptions = program.opts();
   if (options.bench) enableFlag('bench');
+  if (options.check) enableFlag('check');
   await main(options);
   bench.end();
 };

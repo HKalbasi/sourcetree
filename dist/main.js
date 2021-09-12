@@ -77,22 +77,7 @@ const buildHovers = async () => {
     root.className = 'hover-root';
     if (value.content) {
       const text = document.createElement('div');
-      if (value.content.kind == "markdown") {
-        text.innerHTML = value.content.value;
-      } else {
-        (value.content || []).map((c) => {
-          if (typeof c === 'string') {
-            const r = document.createElement('p');
-            r.innerText = c;
-            return r;
-          }
-          if (c.language) {
-            const r = document.createElement('pre');
-            r.innerText = c.value;
-            return r;
-          }
-        }).forEach((x) => text.appendChild(x));  
-      }
+      text.innerHTML = value.content;
       root.appendChild(text);
     }
     const buttons = document.createElement('div');

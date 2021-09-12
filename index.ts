@@ -4,28 +4,27 @@ import hljs from "highlight.js";
 import { putInSrc, Addition, myWriteFile } from "./util";
 import fsExtra from "fs-extra";
 import { distFolder } from "./paths";
-import { lsifParser, Lsif, findRecursiveEdge } from "./lsif";
+import { lsifParser, Lsif, findRecursiveEdge, Element } from "./lsif";
 import { buildTree, TreeNode } from "./tree";
 import { templatesBuilder } from "./templates/index";
 import { start } from "./debug/bench";
 import MarkdownIt from "markdown-it";
+import { contains, Document, item, ItemEdge, ReferenceResult, Range, Id, HoverResult } from "lsif-protocol";
+import { MarkupContent, MarkedString } from "vscode-languageserver-protocol";
+import { HtmlValidate } from "html-validate";
+import { isEnabled } from "./debug/flags";
 
 const markdown = MarkdownIt({
   highlight: (str, lang) => {
     if (lang && hljs.getLanguage(lang)) {
       try {
         return hljs.highlight(str, { language: lang }).value;
-      } catch (_) {}
+      } catch (_) { }
     }
 
     return ''; // use external default escaping
   }
 });
-
-function unwrap<T>(x: T | undefined) {
-  if (x === undefined) throw new Error('unwrap failed');
-  return x;
-};
 
 const myRelative = (path1: string, path2: string) => {
   if (path1 == path2) return '';
@@ -48,7 +47,7 @@ const treeToHtml = (tree: TreeNode[], projectRoot: string, uri: string) => {
     }
     return `<li>${t.name}<ul>${g(t.children, p.slice(1), `${k}/${t.name}`)}</ul></li>`;
   };
-  const g = (x: TreeNode[], p: string[], k: string) => x.map((y)=>f(y, p, k)).join('');
+  const g = (x: TreeNode[], p: string[], k: string) => x.map((y) => f(y, p, k)).join('');
   return `<ul>${g(tree, path, '.')}</ul>`;
 };
 
@@ -59,18 +58,22 @@ type ItemData = {
   srcLine: string;
 };
 
+const isContains = (x: Element): x is contains => {
+  return x.label == 'contains';
+};
+
 const getItemData = (item: any, lsif: Lsif, currentUri: string): ItemData => {
   const position = {
     start: item.start,
     end: item.end,
   };
-  const { uri } = lsif.map.get(
-    lsif.inVMap.get(item.id)?.filter((x) => x.label == 'contains')[0].outV
-  );
+  const { uri } = lsif.item.get(
+    lsif.inV.get(item.id).filter(isContains)[0].outV
+  ) as Document;
   let relPath = currentUri == uri ? '' : `${myRelative(currentUri, uri)}.html`;
-  const url = `${relPath}#${item.start.line+1}`;
+  const url = `${relPath}#${item.start.line + 1}`;
   const filename: string = uri.split('/').slice(-1)[0];
-  const srcLine = (lsif.srcMap.lineSplitted.get(uri) as string[])[item.start.line];
+  const srcLine = lsif.srcMap.lineSplitted(uri)[item.start.line];
   return { filename, url, position, srcLine };
 };
 
@@ -94,20 +97,35 @@ type MainOptions = {
   output: string;
 };
 
-const hoverToHtml = (hover: any) => {
-  if (hover.kind === 'markdown') {
-    return {
-      ...hover,
-      value: markdown.render(hover.value),
-    };
+const markedStringToHtml = (x: MarkedString) => {
+  if (typeof x === 'string') {
+    return x;
   }
-  return hover;
+  return "\n\n```" + x.language + "\n" + x.value.trim() + "\n```\n\n";
 };
+
+const hoverToHtml = (hover: MarkupContent | MarkedString | MarkedString[]) => {
+  if (typeof hover === 'string' || 'language' in hover) {
+    return markdown.render(markedStringToHtml(hover));
+  }
+  if (hover instanceof Array) {
+    return markdown.render(hover.map(markedStringToHtml).join('\n\n---\n\n'));
+  }
+  if (hover.kind === 'markdown') {
+    return markdown.render(hover.value);
+  }
+  if (hover.kind === 'plaintext') {
+    return `<p>${hover.value}</p>`;
+  }
+  throw new Error("bad hover content");
+};
+
+const htmlValidate = new HtmlValidate();
 
 export const main = async ({ input, output }: MainOptions) => {
   let bench = start('Reading files and cleaning');
   const lsif = await lsifParser(input);
-  const { map, outVMap, projectRoot, documents, srcMap } = lsif;
+  const { item, projectRoot, documents, srcMap, outV } = lsif;
   const templates = await templatesBuilder();
   const fileTree = buildTree(projectRoot, documents.map((x) => x.uri));
   await rm(output, { recursive: true, force: true });
@@ -127,12 +145,12 @@ export const main = async ({ input, output }: MainOptions) => {
       const additions: Addition[] = [];
       const hovers: Hovers = {};
       const references: References = {};
-      unwrap(outVMap.get(doc.id)).forEach((edge) => {
+      outV.get(doc.id).forEach((edge) => {
         if (edge.label != 'contains') {
           return;
         }
         for (const id of edge.inVs) {
-          const v = map.get(id);
+          const v = item.get(id) as Range;
           if (v.start.character === v.end.character && v.start.line === v.end.line) {
             continue;
           }
@@ -149,27 +167,27 @@ export const main = async ({ input, output }: MainOptions) => {
           let ref = undefined;
           const defVertex = findRecursiveEdge(lsif, v.id, 'textDocument/definition');
           if (defVertex) {
-            const defItemEdge = unwrap(outVMap.get(defVertex.id))[0];
-            const defItem = map.get(defItemEdge.inVs[0]);
+            const defItemEdge = outV.get(defVertex.id)[0] as item;
+            const defItem = item.get(defItemEdge.inVs[0]);
             if (defItem.id != v.id) {
               definitionPlace = getItemData(defItem, lsif, doc.uri).url;
             }
           }
-          const hoverVertex = findRecursiveEdge(lsif, v.id, 'textDocument/hover');
+          const hoverVertex = findRecursiveEdge(lsif, v.id, 'textDocument/hover') as HoverResult | undefined;
           if (hoverVertex) {
             hoverContent = hoverToHtml(hoverVertex.result.contents);
           }
           const refVertex = findRecursiveEdge(lsif, v.id, 'textDocument/references');
           if (refVertex) {
-            const edge = unwrap(outVMap.get(refVertex.id));
+            const edge = outV.get(refVertex.id) as ItemEdge<ReferenceResult, Range>[];
             const defEdge = edge.filter((x) => x.property === 'definitions');
             if (defEdge.length == 0) continue;
-            const defItem = map.get(defEdge[0].inVs[0]);
+            const defItem = item.get(defEdge[0].inVs[0]);
             const refEdge = edge.filter((x) => x.property !== 'definitions');
             ref = {
               definition: getItemData(defItem, lsif, doc.uri),
               references: refEdge.flatMap((e) => {
-                return e.inVs.map((x: string) => map.get(x)).map((defItem: string) => {
+                return e.inVs.map((x: Id) => item.get(x)).map((defItem: Element) => {
                   return getItemData(defItem, lsif, doc.uri);
                 });
               })
@@ -192,7 +210,7 @@ export const main = async ({ input, output }: MainOptions) => {
   bench.end();
   bench = start('Syntax highlighting');
   const highlighted = lsifParsed.map((x) => {
-    const srcRaw = unwrap(srcMap.raw.get(x.doc.uri));
+    const srcRaw = srcMap.raw(x.doc.uri);
     const highlighted = hljs.highlight(srcRaw, { language: x.doc.languageId }).value;
     return { ...x, highlighted };
   });
@@ -219,6 +237,14 @@ export const main = async ({ input, output }: MainOptions) => {
     const relPath = relative(projectRoot, doc.uri);
     const destPath = join(output, relPath);
     await myWriteFile(destPath + ".html", html);
+    if (isEnabled('check')) {
+      const report = htmlValidate.validateFile(destPath + ".html");
+      console.log("valid", report.valid);
+      if (!report.valid) {
+        console.log(report.results);
+        process.exit(0);
+      }
+    }
     await myWriteFile(destPath + ".ref.json", JSON.stringify({ references }));
     await myWriteFile(destPath + ".hover.json", JSON.stringify({ hovers }));
   }));
