@@ -13,12 +13,12 @@ export type Lsif = {
   item: SafeMap<Id, Element>;
   inV: SafeMap<Id, Element[]>;
   outV: SafeMap<Id, Element[]>;
-  projectRoot: string;
   documents: Document[];
   srcMap: {
     raw: (x: string) => string;
     lineSplitted: (x: string) => string[];
   };
+  uriPath: (x: string) => string;
 };
 
 
@@ -95,7 +95,30 @@ const buildSrcMap = async (documents: Document[]) => {
   return { raw: getFromMap(raw).get, lineSplitted: getFromMap(lineSplitted).get };
 };
 
-export const lsifParser = async (address: string): Promise<Lsif> => {
+const buildUriMap = async (uriMapAddress: string | undefined, documents: Document[], projectRoot: string) => {
+  const r: Map<string, string> = new Map();
+  if (uriMapAddress) {
+    const f = JSON.parse((await readFile(uriMapAddress)).toString());
+    documents.map((doc) => doc.uri).forEach((x) => {
+      const y = f[x];
+      if (!y) {
+        throw new Error(`uri map doesn't have ${x}`);
+      }
+      r.set(x, y);
+    });
+    return getFromMap(r);
+  }
+  documents.map((doc) => doc.uri).forEach((x) => {
+    if (!x.startsWith(projectRoot)) {
+      throw new Error(`file ${x} out of project scope ${projectRoot}`);
+    }
+    const y = x.slice(projectRoot.length + 1);
+    r.set(x, y);
+  });
+  return getFromMap(r);
+};
+
+export const lsifParser = async (address: string, uriMapAddress: string | undefined): Promise<Lsif> => {
   const text = (await readFile(address)).toString();
   const items: Element[] = parseMultiLineJs(text);
   const item = getFromMap(buildItemMap(items));
@@ -104,8 +127,9 @@ export const lsifParser = async (address: string): Promise<Lsif> => {
   const { projectRoot } = getVertexWithLabel(items, "metaData")[0] as MetaData;
   const documents = getVertexWithLabel(items, "document") as Document[];
   const srcMap = await buildSrcMap(documents);
+  const uriMap = await buildUriMap(uriMapAddress, documents, projectRoot);
   return {
-    items, item, inV, outV, projectRoot, documents, srcMap,
+    items, item, inV, outV, documents, srcMap, uriPath: uriMap.get,
   };
 };
 

@@ -8,6 +8,7 @@ program
   .option('-i, --input <file>', 'lsif dump path', 'dump.lsif')
   .option('-o, --output <file>', 'output folder for generated files', 'out')
   .option('--dist <path>', 'customized absolute path to assets')
+  .option('--uri-map <path>', 'customized locations for file tree')
   .option('--bench', 'enable benchmarking logs')
   .option('--check', 'enable integrity checking');
 
@@ -15,6 +16,7 @@ export type CliOptions = {
   input: string;
   output: string;
   dist?: string;
+  uriMap?: string;
   bench: boolean;
   check: boolean;
 };

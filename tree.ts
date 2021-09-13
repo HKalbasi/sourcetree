@@ -5,7 +5,7 @@ export type TreeNode = { name: string } & ({
   kind: 'file',
 });
 
-export const buildTree = (projectRoot: string, list: string[]) => {
+export const buildTree = (list: string[]) => {
   const tree: TreeNode[] = [];
   const getFolder = (path: string[], t = tree) => {
     for (const p of path) {
@@ -26,8 +26,6 @@ export const buildTree = (projectRoot: string, list: string[]) => {
     return t;
   }
   list
-    .filter((x) => x.startsWith(projectRoot))
-    .map((x) => x.slice(projectRoot.length + 1))
     .forEach((x) => {
       let sx = x.split('/');
       const folder = getFolder(sx.slice(0, -1));
