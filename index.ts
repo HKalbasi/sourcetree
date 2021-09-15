@@ -83,10 +83,14 @@ const getItemData = (item: Range, lsif: Lsif, currentPath: string): ItemData => 
 
 type Hovers = {
   [s: string]: {
-    content?: string;
-    definition?: string;
+    content?: Id;
+    definition?: Id;
     references: boolean;
   };
+};
+
+type ObjString = {
+  [s: string]: string;
 };
 
 type References = {
@@ -149,6 +153,11 @@ export const main = async ({ input, output, dist, uriMap }: MainOptions) => {
     .map((doc) => {
       const additions: Addition[] = [];
       const hovers: Hovers = {};
+      const data: ObjString = {};
+      const setDataLazy = (key: Id, lazy: () => string) => {
+        if (key in data) return;
+        data[key] = lazy();
+      };
       const references: References = {};
       outV.get(doc.id).forEach((edge) => {
         const path = uriPath(doc.uri);
@@ -168,20 +177,22 @@ export const main = async ({ input, output, dist, uriMap }: MainOptions) => {
             position: v.end,
             text: '</span>',
           });
-          let hoverContent = undefined;
-          let definitionPlace = undefined;
+          let hoverContent: Id | undefined = undefined;
+          let definitionPlace: Id | undefined = undefined;
           let ref = undefined;
           const defVertex = findRecursiveEdge(lsif, v.id, 'textDocument/definition');
           if (defVertex) {
             const defItemEdge = outV.get(defVertex.id)[0] as item;
             const defItem = item.get(defItemEdge.inVs[0]) as Range;
             if (defItem.id != v.id) {
-              definitionPlace = getItemData(defItem, lsif, path).url;
+              setDataLazy(defItem.id, () => getItemData(defItem, lsif, path).url);
+              definitionPlace = defItem.id;
             }
           }
           const hoverVertex = findRecursiveEdge(lsif, v.id, 'textDocument/hover') as HoverResult | undefined;
           if (hoverVertex) {
-            hoverContent = hoverToHtml(hoverVertex.result.contents);
+            setDataLazy(hoverVertex.id, () => hoverToHtml(hoverVertex.result.contents));
+            hoverContent = hoverVertex.id;
           }
           const refVertex = findRecursiveEdge(lsif, v.id, 'textDocument/references');
           if (refVertex) {
@@ -211,7 +222,7 @@ export const main = async ({ input, output, dist, uriMap }: MainOptions) => {
           }
         }
       });
-      return { doc, additions, hovers, references };
+      return { doc, additions, hovers, references, data };
     });
   bench.end();
   bench = start('Syntax highlighting');
@@ -222,13 +233,13 @@ export const main = async ({ input, output, dist, uriMap }: MainOptions) => {
   });
   bench.end();
   bench = start('Adding additions');
-  const added = highlighted.map(({ doc, additions, hovers, references, highlighted }) => {
-    const src = putInSrc(highlighted, additions);
-    return { doc, hovers, references, src };
+  const added = highlighted.map((x) => {
+    const src = putInSrc(x.highlighted, x.additions);
+    return { ...x, src };
   });
   bench.end();
   bench = start('Templating with EJS');
-  const generated = added.map(({ doc, hovers, references, src }) => {
+  const generated = added.map(({ doc, hovers, references, src, data }) => {
     const path = uriPath(doc.uri);
     const depth = path.split('/').length - 1;
     const html = templates.source({
@@ -236,11 +247,11 @@ export const main = async ({ input, output, dist, uriMap }: MainOptions) => {
       tree: treeToHtml(fileTree, path),
       distPath: dist ? dist : `${'../'.repeat(depth)}_dist/`,
     });
-    return { doc, html, hovers, references };
+    return { doc, html, hovers, references, data };
   });
   bench.end();
   bench = start('Writing generated files');
-  await Promise.all(generated.map(async ({ doc, html, hovers, references }) => {
+  await Promise.all(generated.map(async ({ doc, html, hovers, references, data }) => {
     const relPath = uriPath(doc.uri);
     const destPath = join(output, relPath);
     await myWriteFile(destPath + ".html", html);
@@ -253,7 +264,7 @@ export const main = async ({ input, output, dist, uriMap }: MainOptions) => {
       }
     }
     await myWriteFile(destPath + ".ref.json", JSON.stringify({ references }));
-    await myWriteFile(destPath + ".hover.json", JSON.stringify({ hovers }));
+    await myWriteFile(destPath + ".hover.json", JSON.stringify({ hovers, data }));
   }));
   bench.end();
 };

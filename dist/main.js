@@ -69,7 +69,7 @@ document.getElementById('search-input').oninput = (e) => {
 const buildHovers = async () => {
   const filename = location.pathname.split('/').slice(-1)[0];
   const res = await fetch(`./${filename.slice(0, -5)}.hover.json?v=${(new Date).valueOf()}`);
-  const { hovers } = await res.json();
+  const { hovers, data } = await res.json();
   Object.keys(hovers).map((x) => ({
     id: x.slice(1), value: hovers[x],
   })).forEach(({ id, value }) => {
@@ -77,14 +77,14 @@ const buildHovers = async () => {
     root.className = 'hover-root';
     if (value.content) {
       const text = document.createElement('div');
-      text.innerHTML = value.content;
+      text.innerHTML = data[value.content];
       root.appendChild(text);
     }
     const buttons = document.createElement('div');
     buttons.className = 'button-holder';
     if (value.definition) {
       const b = document.createElement('a');
-      b.href = value.definition;
+      b.href = data[value.definition];
       b.className = 'button';
       b.innerText = 'Go to definition';
       buttons.appendChild(b);
