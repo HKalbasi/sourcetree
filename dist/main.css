@@ -26,7 +26,7 @@ ul {
   background-color: #1e1e1e;
   color: white;
   max-height: 100vh;
-  overflow-y: scroll;
+  overflow-y: auto;
   flex-grow: 1;
   display: flex;
 }
@@ -51,11 +51,11 @@ ul {
 }
 
 #panel-files {
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 #panel-search {
-  overflow-x: scroll;
+  overflow-x: auto;
   width: 25vw;
 }
 
