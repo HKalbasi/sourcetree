@@ -102,7 +102,8 @@ const buildUriMap = async (uriMapAddress: string | undefined, documents: Documen
     documents.map((doc) => doc.uri).forEach((x) => {
       const y = f[x];
       if (!y) {
-        throw new Error(`uri map doesn't have ${x}`);
+        r.set(x, `notmapped${x.slice(7)}`);
+        return;
       }
       r.set(x, y);
     });
@@ -110,7 +111,8 @@ const buildUriMap = async (uriMapAddress: string | undefined, documents: Documen
   }
   documents.map((doc) => doc.uri).forEach((x) => {
     if (!x.startsWith(projectRoot)) {
-      throw new Error(`file ${x} out of project scope ${projectRoot}`);
+      r.set(x, `notmapped${x.slice(7)}`);
+      return;
     }
     const y = x.slice(projectRoot.length + 1);
     r.set(x, y);
