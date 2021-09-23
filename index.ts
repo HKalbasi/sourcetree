@@ -90,7 +90,7 @@ type Hovers = {
 };
 
 type ObjString = {
-  [s: string]: string;
+  [s: string]: Id;
 };
 
 type References = {
@@ -158,7 +158,8 @@ export const main = async ({ input, output, dist, uriMap }: MainOptions) => {
         if (key in data) return;
         data[key] = lazy();
       };
-      const references: References = {};
+      const refs: References = {};
+      const refData: ObjString = {};
       outV.get(doc.id).forEach((edge) => {
         const path = uriPath(doc.uri);
         if (edge.label != 'contains') {
@@ -196,21 +197,24 @@ export const main = async ({ input, output, dist, uriMap }: MainOptions) => {
           }
           const refVertex = findRecursiveEdge(lsif, v.id, 'textDocument/references');
           if (refVertex) {
-            const edge = outV.get(refVertex.id) as ItemEdge<ReferenceResult, Range>[];
-            const defEdge = edge.filter((x) => x.property === 'definitions');
-            const refEdge = edge.filter((x) => x.property === 'references');
-            ref = {
-              definitions: defEdge.flatMap((e) => {
-                return e.inVs.map((x: Id) => item.get(x)).map((defItem: Element) => {
-                  return getItemData(defItem as Range, lsif, path);
-                });
-              }),
-              references: refEdge.flatMap((e) => {
-                return e.inVs.map((x: Id) => item.get(x)).map((defItem: Element) => {
-                  return getItemData(defItem as Range, lsif, path);
-                });
-              })
-            };
+            if (!(refVertex.id in refs)) {
+              const edge = outV.get(refVertex.id) as ItemEdge<ReferenceResult, Range>[];
+              const defEdge = edge.filter((x) => x.property === 'definitions');
+              const refEdge = edge.filter((x) => x.property === 'references');
+              refs[refVertex.id] = {
+                definitions: defEdge.flatMap((e) => {
+                  return e.inVs.map((x: Id) => item.get(x)).map((defItem: Element) => {
+                    return getItemData(defItem as Range, lsif, path);
+                  });
+                }),
+                references: refEdge.flatMap((e) => {
+                  return e.inVs.map((x: Id) => item.get(x)).map((defItem: Element) => {
+                    return getItemData(defItem as Range, lsif, path);
+                  });
+                })
+              };
+            }
+            ref = refVertex.id;
           }
           if (hoverContent || definitionPlace) {
             hovers[`x${v.id}`] = {
@@ -220,11 +224,11 @@ export const main = async ({ input, output, dist, uriMap }: MainOptions) => {
             };
           }
           if (ref) {
-            references[`x${v.id}`] = ref;
+            refData[`x${v.id}`] = ref;
           }
         }
       });
-      return { doc, additions, hovers, references, data };
+      return { doc, additions, hovers, references: { pointers: refData, content: refs }, data };
     });
   bench.end();
   bench = start('Syntax highlighting');
@@ -267,7 +271,7 @@ export const main = async ({ input, output, dist, uriMap }: MainOptions) => {
         process.exit(0);
       }
     }
-    await myWriteFile(destPath + ".ref.json", JSON.stringify({ references }));
+    await myWriteFile(destPath + ".ref.json", JSON.stringify(references));
     await myWriteFile(destPath + ".hover.json", JSON.stringify({ hovers, data }));
   }));
   bench.end();

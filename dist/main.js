@@ -56,9 +56,9 @@ const updateSearchResult = async (x) => {
   const SR = document.getElementById('search-result');
   SR.innerText = 'Loading...';
   if (x.startsWith('#lsif')) {
-    const { references } = await getLazyData();
+    const { pointers, content } = await getLazyData();
     SR.innerText = '';
-    SR.appendChild(buildSearchItem(references[`x${x.slice(5)}`]));
+    SR.appendChild(buildSearchItem(content[pointers[`x${x.slice(5)}`]]));
   }
 }
 
