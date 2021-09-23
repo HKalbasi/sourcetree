@@ -198,7 +198,7 @@ export const main = async ({ input, output, dist, uriMap }: MainOptions) => {
           if (refVertex) {
             const edge = outV.get(refVertex.id) as ItemEdge<ReferenceResult, Range>[];
             const defEdge = edge.filter((x) => x.property === 'definitions');
-            const refEdge = edge.filter((x) => x.property !== 'definitions');
+            const refEdge = edge.filter((x) => x.property === 'references');
             ref = {
               definitions: defEdge.flatMap((e) => {
                 return e.inVs.map((x: Id) => item.get(x)).map((defItem: Element) => {
