@@ -95,7 +95,7 @@ type ObjString = {
 
 type References = {
   [s: string]: {
-    definition: ItemData;
+    definitions: ItemData[];
     references: ItemData[];
   };
 };
@@ -198,11 +198,13 @@ export const main = async ({ input, output, dist, uriMap }: MainOptions) => {
           if (refVertex) {
             const edge = outV.get(refVertex.id) as ItemEdge<ReferenceResult, Range>[];
             const defEdge = edge.filter((x) => x.property === 'definitions');
-            if (defEdge.length == 0) continue;
-            const defItem = item.get(defEdge[0].inVs[0]) as Range;
             const refEdge = edge.filter((x) => x.property !== 'definitions');
             ref = {
-              definition: getItemData(defItem, lsif, path),
+              definitions: defEdge.flatMap((e) => {
+                return e.inVs.map((x: Id) => item.get(x)).map((defItem: Element) => {
+                  return getItemData(defItem as Range, lsif, path);
+                });
+              }),
               references: refEdge.flatMap((e) => {
                 return e.inVs.map((x: Id) => item.get(x)).map((defItem: Element) => {
                   return getItemData(defItem as Range, lsif, path);

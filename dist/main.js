@@ -33,7 +33,7 @@ window.searchText = (x) => {
   updateSearchResult(x);
 };
 
-const buildSearchItem = ({ references, definition }) => {
+const buildSearchItem = ({ references, definitions }) => {
   const main = document.createElement('div');
   const f = (x, suffix) => {
     const root = document.createElement('a');
@@ -47,7 +47,7 @@ const buildSearchItem = ({ references, definition }) => {
     root.appendChild(pre);
     return root;
   };
-  main.appendChild(f(definition, ' - definition'));
+  definitions.map((x) => f(x, ' - definition')).forEach((x) => main.appendChild(x));
   references.map((x) => f(x, '')).forEach((x) => main.appendChild(x));
   return main;
 };
