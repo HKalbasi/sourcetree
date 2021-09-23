@@ -241,9 +241,11 @@ export const main = async ({ input, output, dist, uriMap }: MainOptions) => {
   bench = start('Templating with EJS');
   const generated = added.map(({ doc, hovers, references, src, data }) => {
     const path = uriPath(doc.uri);
-    const depth = path.split('/').length - 1;
+    const pathSplitted = path.split('/');
+    const filename = pathSplitted.slice(-1)[0];
+    const depth = pathSplitted.length - 1;
     const html = templates.source({
-      src,
+      src, filename,
       tree: treeToHtml(fileTree, path),
       distPath: dist ? dist : `${'../'.repeat(depth)}_dist/`,
     });
