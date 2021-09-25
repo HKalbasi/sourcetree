@@ -30,7 +30,9 @@ jobs:
           npm install --save-dev
           npm run build
           npm run dogfood
-      
+          curl -L https://sourcegraph.com/.api/src-cli/src_linux_amd64 -o /usr/local/bin/src
+          chmod +x /usr/local/bin/src
+          /usr/local/bin/src lsif upload -github-token=${{ secrets.GITHUB_TOKEN }}
       # Runs a set of commands using the runners shell
       - name: Deploy to github pages
         if: success()
