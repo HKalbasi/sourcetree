@@ -18,9 +18,15 @@ ul {
   height: 100vh;
 }
 
-#main-panel {
+#main-panel, .search-result-code {
   background-color: #1e1e1e;
   color: white;
+}
+.search-result-code {
+  display: inline-block;
+  padding: 0 .5rem;
+}
+#main-panel {  
   max-height: 100vh;
   overflow-y: auto;
   flex-grow: 1;

@@ -27,24 +27,41 @@ const panelButtonOnClick = (ev) => {
 [...document.getElementById('side-panel-tabs').children].forEach((e) => {
   e.onclick = panelButtonOnClick;
 });
-window.searchText = (x) => {
+window.searchText = (x, hint) => {
   switchTab('search');
   document.getElementById('search-input').value = x;
-  updateSearchResult(x);
+  updateSearchResult(x, hint);
+};
+
+const getSource = async (url) => {
+  const res = await fetch(url.slice(0, -5) + '.src.html', {
+    cache: 'no-cache',
+  });
+  return res.text();
 };
 
 const buildSearchItem = ({ references, definitions }) => {
   const main = document.createElement('div');
   const f = (x, suffix) => {
     const root = document.createElement('a');
-    root.href = x.url;
+    root.href = x;
+    const [url, hash] = x.split('#');
+    const filename = url.split('/').slice(-1)[0];
+    const lineNumber = hash;
     root.className = 'search-result';
     const nam = document.createElement('div');
-    nam.innerText = `${x.filename}${suffix}`;
+    nam.innerText = `${filename}${suffix}`;
     root.appendChild(nam);
+    const preHolder = document.createElement('div');
+    preHolder.className = 'search-result-code';
     const pre = document.createElement('pre');
-    pre.innerText = `${x.position.start.line + 1}| ${x.srcLine.trim()}`;
-    root.appendChild(pre);
+    pre.innerText = `${lineNumber}| loading...`;
+    (async () => {
+      let source = await getSource(url);
+      pre.innerHTML = `${lineNumber}| ${source.split('\n')[lineNumber - 1].trim()}`;
+    })();
+    preHolder.appendChild(pre);
+    root.appendChild(preHolder);
     return root;
   };
   definitions.map((x) => f(x, ' - definition')).forEach((x) => main.appendChild(x));
@@ -52,13 +69,13 @@ const buildSearchItem = ({ references, definitions }) => {
   return main;
 };
 
-const updateSearchResult = async (x) => {
+const updateSearchResult = async (x, hint) => {
   const SR = document.getElementById('search-result');
   SR.innerText = 'Loading...';
   if (x.startsWith('#lsif')) {
-    const { pointers, content } = await getLazyData();
+    const refData = await (await fetch(`/_data/refs/${hint}.json`)).json();
     SR.innerText = '';
-    SR.appendChild(buildSearchItem(content[pointers[`x${x.slice(5)}`]]));
+    SR.appendChild(buildSearchItem(refData));
   }
 }
 
@@ -67,8 +84,7 @@ document.getElementById('search-input').oninput = (e) => {
 };
 
 const buildHovers = async () => {
-  const filename = location.pathname.split('/').slice(-1)[0];
-  const res = await fetch(`./${filename.slice(0, -5)}.hover.json?v=${(new Date).valueOf()}`);
+  const res = await fetch(`${location.pathname.slice(0, -5)}.hover.json?v=${(new Date).valueOf()}`);
   const { hovers, data } = await res.json();
   Object.keys(hovers).map((x) => ({
     id: x.slice(1), value: hovers[x],
@@ -82,16 +98,16 @@ const buildHovers = async () => {
     }
     const buttons = document.createElement('div');
     buttons.className = 'button-holder';
-    if (value.definition) {
+    if ('definition' in value) {
       const b = document.createElement('a');
       b.href = data[value.definition];
       b.className = 'button';
       b.innerText = 'Go to definition';
       buttons.appendChild(b);
     }
-    if (value.references) {
+    if ('references' in value) {
       const b = document.createElement('a');
-      b.onclick = () => searchText(`#lsif${id}`);
+      b.onclick = () => searchText(`#lsif${id}`, value.references);
       b.className = 'button';
       b.innerText = 'Find all references';
       buttons.appendChild(b);

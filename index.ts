@@ -26,24 +26,12 @@ const markdown = MarkdownIt({
   }
 });
 
-const myRelative = (path1: string, path2: string) => {
-  if (path1 == path2) return '';
-  const s1 = path1.split('/');
-  const s2 = path2.split('/');
-  let i = 0;
-  while (s1[i] == s2[i]) i += 1;
-  const k1 = s1.slice(i);
-  const k2 = s2.slice(i);
-  return `./${'../'.repeat(k1.length - 1)}${k2.join('/')}`;
-};
-
 const treeToHtml = (tree: TreeNode[], uri: string) => {
   const path = uri.split('/');
-  const pre = '../'.repeat(path.length - 1);
   const f = (t: TreeNode, p: string[], k: string): string => {
     if (t.kind === 'file') {
       const c = p[0] === t.name ? ` class="current-file"` : ``;
-      return `<li${c}><a href="${pre}${k}/${t.name}.html">${t.name}</a></li>`;
+      return `<li${c}><a href="${k}/${t.name}.html">${t.name}</a></li>`;
     }
     return `<li>${t.name}<ul>${g(t.children, p[0] === t.name ? p.slice(1) : [], `${k}/${t.name}`)}</ul></li>`;
   };
@@ -51,41 +39,26 @@ const treeToHtml = (tree: TreeNode[], uri: string) => {
   return `<ul>${g(tree, path, '.')}</ul>`;
 };
 
-type ItemData = {
-  filename: string;
-  url: string;
-  position: {
-    start: Position;
-    end: Position;
-  };
-  srcLine: string;
-};
+type ItemData = string;
 
 const isContains = (x: Element): x is contains => {
   return x.label == 'contains';
 };
 
-const getItemData = (item: Range, lsif: Lsif, currentPath: string): ItemData => {
-  const position = {
-    start: item.start,
-    end: item.end,
-  };
+const getItemData = (item: Range, lsif: Lsif): ItemData => {
   const { uri } = lsif.item.get(
     lsif.inV.get(item.id).filter(isContains)[0].outV
   ) as Document;
-  const path = lsif.uriPath(uri);
-  let relPath = currentPath === path ? '' : `${myRelative(currentPath, path)}.html`;
-  const url = `${relPath}#${item.start.line + 1}`;
-  const filename: string = path.split('/').slice(-1)[0];
-  const srcLine = lsif.srcMap.lineSplitted(uri)[item.start.line];
-  return { filename, url, position, srcLine };
+  const path = `${lsif.uriPath(uri)}.html`;
+  const url = `${path}#${item.start.line + 1}`;
+  return url;
 };
 
 type Hovers = {
   [s: string]: {
     content?: Id;
     definition?: Id;
-    references: boolean;
+    references?: Id;
   };
 };
 
@@ -149,8 +122,9 @@ export const main = async ({ input, output, dist, uriMap }: MainOptions) => {
   await myWriteFile(join(output, '.nojekyll'), '');
   bench.end();
   bench = start('Parsing lsif dump');
-  const lsifParsed = documents
-    .map((doc) => {
+  const refs: Set<Id> = new Set();
+  const lsifParsed = await Promise.all(documents
+    .map(async (doc) => {
       const additions: Addition[] = [];
       const hovers: Hovers = {};
       const data: ObjString = {};
@@ -158,8 +132,6 @@ export const main = async ({ input, output, dist, uriMap }: MainOptions) => {
         if (key in data) return;
         data[key] = lazy();
       };
-      const refs: References = {};
-      const refData: ObjString = {};
       outV.get(doc.id).forEach((edge) => {
         const path = uriPath(doc.uri);
         if (edge.label != 'contains') {
@@ -170,14 +142,6 @@ export const main = async ({ input, output, dist, uriMap }: MainOptions) => {
           if (v.start.character === v.end.character && v.start.line === v.end.line) {
             continue;
           }
-          additions.push({
-            position: v.start,
-            text: `<span id="lsif${v.id}">`
-          });
-          additions.push({
-            position: v.end,
-            text: '</span>',
-          });
           let hoverContent: Id | undefined = undefined;
           let definitionPlace: Id | undefined = undefined;
           let ref = undefined;
@@ -186,7 +150,7 @@ export const main = async ({ input, output, dist, uriMap }: MainOptions) => {
             const defItemEdge = outV.get(defVertex.id)[0] as item;
             const defItem = item.get(defItemEdge.inVs[0]) as Range;
             if (defItem.id != v.id) {
-              setDataLazy(defItem.id, () => getItemData(defItem, lsif, path).url);
+              setDataLazy(defItem.id, () => getItemData(defItem, lsif));
               definitionPlace = defItem.id;
             }
           }
@@ -197,39 +161,51 @@ export const main = async ({ input, output, dist, uriMap }: MainOptions) => {
           }
           const refVertex = findRecursiveEdge(lsif, v.id, 'textDocument/references');
           if (refVertex) {
-            if (!(refVertex.id in refs)) {
-              const edge = outV.get(refVertex.id) as ItemEdge<ReferenceResult, Range>[];
-              const defEdge = edge.filter((x) => x.property === 'definitions');
-              const refEdge = edge.filter((x) => x.property === 'references');
-              refs[refVertex.id] = {
-                definitions: defEdge.flatMap((e) => {
-                  return e.inVs.map((x: Id) => item.get(x)).map((defItem: Element) => {
-                    return getItemData(defItem as Range, lsif, path);
-                  });
-                }),
-                references: refEdge.flatMap((e) => {
-                  return e.inVs.map((x: Id) => item.get(x)).map((defItem: Element) => {
-                    return getItemData(defItem as Range, lsif, path);
-                  });
-                })
-              };
-            }
+            refs.add(refVertex.id);
             ref = refVertex.id;
           }
-          if (hoverContent || definitionPlace) {
+          if (hoverContent || definitionPlace || ref) {
             hovers[`x${v.id}`] = {
               content: hoverContent,
               definition: definitionPlace,
-              references: ref !== undefined,
+              references: ref,
             };
-          }
-          if (ref) {
-            refData[`x${v.id}`] = ref;
+            additions.push({
+              position: v.start,
+              text: `<span id="lsif${v.id}">`
+            });
+            additions.push({
+              position: v.end,
+              text: '</span>',
+            });
           }
         }
       });
-      return { doc, additions, hovers, references: { pointers: refData, content: refs }, data };
-    });
+      const relPath = uriPath(doc.uri);
+      const destPath = join(output, relPath);
+      await myWriteFile(destPath + ".hover.json", JSON.stringify({ hovers, data }));
+      return { destPath, doc, additions };
+    }));
+  bench.end();
+  bench = start('Create find references files');
+  const refFolder = join(output, '_data', 'refs');
+  for (const id of refs) {
+    const edge = outV.get(id) as ItemEdge<ReferenceResult, Range>[];
+    const defEdge = edge.filter((x) => x.property === 'definitions');
+    const refEdge = edge.filter((x) => x.property === 'references');
+    await myWriteFile(`${refFolder}/${id}.json`, JSON.stringify({
+      definitions: defEdge.flatMap((e) => {
+        return e.inVs.map((x: Id) => {
+          return getItemData(item.get(x) as Range, lsif);
+        });
+      }),
+      references: refEdge.flatMap((e) => {
+        return e.inVs.map((x: Id) => {
+          return getItemData(item.get(x) as Range, lsif);
+        });
+      }),
+    }));
+  }
   bench.end();
   bench = start('Syntax highlighting');
   const highlighted = lsifParsed.map((x) => {
@@ -245,7 +221,7 @@ export const main = async ({ input, output, dist, uriMap }: MainOptions) => {
   });
   bench.end();
   bench = start('Templating with EJS');
-  const generated = added.map(({ doc, hovers, references, src, data }) => {
+  const generated = added.map(({ doc, destPath, src }) => {
     const path = uriPath(doc.uri);
     const pathSplitted = path.split('/');
     const filename = pathSplitted.slice(-1)[0];
@@ -253,16 +229,16 @@ export const main = async ({ input, output, dist, uriMap }: MainOptions) => {
     const html = templates.source({
       src, filename,
       tree: treeToHtml(fileTree, path),
-      distPath: dist ? dist : `${'../'.repeat(depth)}_dist/`,
+      distPath: dist ? dist : `_dist/`,
+      basePath: `./${'../'.repeat(depth)}`,
     });
-    return { doc, html, hovers, references, data };
+    return { html, destPath, src };
   });
   bench.end();
   bench = start('Writing generated files');
-  await Promise.all(generated.map(async ({ doc, html, hovers, references, data }) => {
-    const relPath = uriPath(doc.uri);
-    const destPath = join(output, relPath);
+  await Promise.all(generated.map(async ({ destPath, html, src }) => {
     await myWriteFile(destPath + ".html", html);
+    await myWriteFile(destPath + ".src.html", src);
     if (isEnabled('check')) {
       const report = htmlValidate.validateFile(destPath + ".html");
       console.log("valid", report.valid);
@@ -271,8 +247,6 @@ export const main = async ({ input, output, dist, uriMap }: MainOptions) => {
         process.exit(0);
       }
     }
-    await myWriteFile(destPath + ".ref.json", JSON.stringify(references));
-    await myWriteFile(destPath + ".hover.json", JSON.stringify({ hovers, data }));
   }));
   bench.end();
 };
