@@ -1,0 +1,19 @@
+<span class="hljs-keyword">import</span> { <span id="lsif189">isEnabled</span> } <span class="hljs-keyword">from</span> <span class="hljs-string"><span id="lsif193">&quot;./flags&quot;</span></span>;
+
+<span class="hljs-keyword">type</span> <span class="hljs-title class_"><span id="lsif198">Bench</span></span> = <span id="lsif217">{
+  <span class="hljs-attr"><span id="lsif205">end</span></span>: <span class="hljs-function"><span id="lsif212">() =&gt;</span> <span class="hljs-built_in">void</span></span>;
+}</span>;
+
+<span class="hljs-keyword">const</span> <span class="hljs-attr"><span id="lsif222">emptyBench</span></span>: <span class="hljs-title class_"><span id="lsif226">Bench</span></span> = <span id="lsif243">{ <span class="hljs-attr"><span id="lsif231">end</span></span>: <span class="hljs-function">() <span id="lsif238">=&gt;</span></span> {} }</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span id="lsif251">start</span> = (<span class="hljs-attr"><span id="lsif258">text</span></span>: <span class="hljs-built_in">string</span>, <span class="hljs-attr"><span id="lsif265">force</span></span>: <span class="hljs-built_in">boolean</span> = <span class="hljs-literal">false</span>): <span class="hljs-function"><span class="hljs-params"><span id="lsif269">Bench</span></span> <span id="lsif274">=&gt;</span></span> {
+  <span class="hljs-keyword">if</span> (!<span class="hljs-title function_"><span id="lsif276">isEnabled</span></span>(<span class="hljs-string">&#x27;bench&#x27;</span>) &amp;&amp; !<span id="lsif278">force</span>) <span class="hljs-keyword">return</span> <span id="lsif280">emptyBench</span>;
+  <span class="hljs-variable language_"><span id="lsif301">console</span></span>.<span class="hljs-title function_"><span id="lsif312">log</span></span>(<span class="hljs-string">`<span class="hljs-subst">${<span id="lsif314">text</span>}</span> started`</span>);
+  <span class="hljs-keyword">const</span> <span id="lsif319">s</span> = (<span class="hljs-keyword">new</span> <span class="hljs-title class_"><span id="lsif338">Date</span></span>).<span class="hljs-title function_"><span id="lsif350">valueOf</span></span>();
+  <span class="hljs-keyword">return</span> <span id="lsif388">{
+    <span class="hljs-attr"><span id="lsif355">end</span></span>: <span class="hljs-function">() <span id="lsif362">=&gt;</span></span> {
+      <span class="hljs-keyword">const</span> <span id="lsif367">diff</span> = (<span class="hljs-keyword">new</span> <span class="hljs-title class_"><span id="lsif371">Date</span></span>).<span class="hljs-title function_"><span id="lsif373">valueOf</span></span>() - <span id="lsif375">s</span>;
+      <span class="hljs-variable language_"><span id="lsif377">console</span></span>.<span class="hljs-title function_"><span id="lsif379">log</span></span>(<span class="hljs-string">`<span class="hljs-subst">${<span id="lsif381">text</span>}</span> finished in <span class="hljs-subst">${<span id="lsif383">diff</span> / <span class="hljs-number">1000</span>}</span> seconds`</span>);
+    },
+  }</span>;
+};

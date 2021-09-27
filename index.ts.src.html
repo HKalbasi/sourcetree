@@ -1,0 +1,240 @@
+<span class="hljs-keyword">import</span> { <span id="lsif5499">rm</span>, <span id="lsif5507">readFile</span> } <span class="hljs-keyword">from</span> <span class="hljs-string"><span id="lsif5511">&quot;fs/promises&quot;</span></span>;
+<span class="hljs-keyword">import</span> { <span id="lsif5517">join</span> } <span class="hljs-keyword">from</span> <span class="hljs-string"><span id="lsif5521">&quot;path&quot;</span></span>;
+<span class="hljs-keyword">import</span> <span id="lsif5540">hljs</span> <span class="hljs-keyword">from</span> <span class="hljs-string"><span id="lsif5554">&quot;highlight.js&quot;</span></span>;
+<span class="hljs-keyword">import</span> { <span id="lsif5560">putInSrc</span>, <span class="hljs-title class_"><span id="lsif5568">Addition</span></span>, <span id="lsif5576">myWriteFile</span> } <span class="hljs-keyword">from</span> <span class="hljs-string"><span id="lsif5580">&quot;./util&quot;</span></span>;
+<span class="hljs-keyword">import</span> { <span id="lsif5586">distFolder</span> } <span class="hljs-keyword">from</span> <span class="hljs-string"><span id="lsif5590">&quot;./paths&quot;</span></span>;
+<span class="hljs-keyword">import</span> { <span id="lsif5596">lsifParser</span>, <span class="hljs-title class_"><span id="lsif5604">Lsif</span></span>, <span id="lsif5612">findRecursiveEdge</span>, <span class="hljs-title class_"><span id="lsif5620">Element</span></span> } <span class="hljs-keyword">from</span> <span class="hljs-string"><span id="lsif5624">&quot;./lsif&quot;</span></span>;
+<span class="hljs-keyword">import</span> { <span id="lsif5630">buildTree</span>, <span class="hljs-title class_"><span id="lsif5638">TreeNode</span></span> } <span class="hljs-keyword">from</span> <span class="hljs-string"><span id="lsif5642">&quot;./tree&quot;</span></span>;
+<span class="hljs-keyword">import</span> { <span id="lsif5648">templatesBuilder</span> } <span class="hljs-keyword">from</span> <span class="hljs-string"><span id="lsif5652">&quot;./templates/index&quot;</span></span>;
+<span class="hljs-keyword">import</span> { <span id="lsif5658">start</span> } <span class="hljs-keyword">from</span> <span class="hljs-string"><span id="lsif5662">&quot;./debug/bench&quot;</span></span>;
+<span class="hljs-keyword">import</span> <span class="hljs-title class_"><span id="lsif5690">MarkdownIt</span></span> <span class="hljs-keyword">from</span> <span class="hljs-string"><span id="lsif5711">&quot;markdown-it&quot;</span></span>;
+<span class="hljs-keyword">import</span> { <span id="lsif5727">contains</span>, <span class="hljs-title class_"><span id="lsif5735">Document</span></span>, <span id="lsif5753">item</span>, <span class="hljs-title class_"><span id="lsif5771">ItemEdge</span></span>, <span class="hljs-title class_"><span id="lsif5789">ReferenceResult</span></span>, <span class="hljs-title class_"><span id="lsif5807">Range</span></span>, <span class="hljs-title class_"><span id="lsif5815">Id</span></span>, <span class="hljs-title class_"><span id="lsif5833">HoverResult</span></span> } <span class="hljs-keyword">from</span> <span class="hljs-string"><span id="lsif5837">&quot;lsif-protocol&quot;</span></span>;
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_"><span id="lsif5866">MarkupContent</span></span>, <span class="hljs-title class_"><span id="lsif5886">MarkedString</span></span> } <span class="hljs-keyword">from</span> <span class="hljs-string"><span id="lsif5908">&quot;vscode-languageserver-protocol&quot;</span></span>;
+
+<span class="hljs-keyword">const</span> <span id="lsif5913">markdown</span> = <span class="hljs-title class_"><span id="lsif5917">MarkdownIt</span></span>(<span id="lsif6015">{
+  <span class="hljs-attr"><span id="lsif5922">highlight</span></span>: <span class="hljs-function">(<span class="hljs-params"><span id="lsif5929">str</span>, <span id="lsif5936">lang</span></span>) <span id="lsif5943">=&gt;</span></span> {
+    <span class="hljs-keyword">if</span> (<span id="lsif5945">lang</span> &amp;&amp; <span id="lsif5947">hljs</span>.<span class="hljs-title function_"><span id="lsif5959">getLanguage</span></span>(<span id="lsif5961">lang</span>)) {
+      <span class="hljs-keyword">try</span> {
+        <span class="hljs-keyword">return</span> <span id="lsif5963">hljs</span>.<span class="hljs-title function_"><span id="lsif5975">highlight</span></span>(<span id="lsif5977">str</span>, <span id="lsif5991">{ <span class="hljs-attr"><span id="lsif5982">language</span></span>: <span id="lsif5986">lang</span> }</span>).<span class="hljs-property"><span id="lsif6003">value</span></span>;
+      } <span class="hljs-keyword">catch</span> (<span id="lsif6008">_</span>) { }
+    }
+
+    <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;&#x27;</span>; <span class="hljs-comment">// use external default escaping</span>
+  }
+}</span>);
+
+<span class="hljs-keyword">const</span> <span class="hljs-title function_"><span id="lsif6020">treeToHtml</span></span> = (<span class="hljs-params"><span id="lsif6027">tree</span>: <span id="lsif6031">TreeNode</span>[], <span id="lsif6036">uri</span>: <span class="hljs-built_in">string</span></span>) <span id="lsif6043">=&gt;</span> {
+  <span class="hljs-keyword">const</span> <span id="lsif6048">path</span> = <span id="lsif6052">uri</span>.<span class="hljs-title function_"><span id="lsif6054">split</span></span>(<span class="hljs-string">&#x27;/&#x27;</span>);
+  <span class="hljs-keyword">const</span> <span id="lsif6059">f</span> = (<span class="hljs-attr"><span id="lsif6066">t</span></span>: <span class="hljs-title class_"><span id="lsif6070">TreeNode</span></span>, <span class="hljs-attr"><span id="lsif6075">p</span></span>: <span class="hljs-built_in">string</span>[], <span class="hljs-attr"><span id="lsif6082">k</span></span>: <span class="hljs-built_in">string</span>): <span class="hljs-function"><span class="hljs-params">string</span> <span id="lsif6089">=&gt;</span></span> {
+    <span class="hljs-keyword">if</span> (<span id="lsif6091">t</span>.<span class="hljs-property"><span id="lsif6093">kind</span></span> === <span class="hljs-string">&#x27;file&#x27;</span>) {
+      <span class="hljs-keyword">const</span> <span id="lsif6098">c</span> = <span id="lsif6102">p</span>[<span class="hljs-number">0</span>] === <span id="lsif6104">t</span>.<span class="hljs-property"><span id="lsif6106">name</span></span> ? <span class="hljs-string">` class=&quot;current-file&quot;`</span> : <span class="hljs-string">``</span>;
+      <span class="hljs-keyword">return</span> <span class="hljs-string">`&lt;li<span class="hljs-subst">${<span id="lsif6108">c</span>}</span>&gt;&lt;a href=&quot;<span class="hljs-subst">${<span id="lsif6110">k</span>}</span>/<span class="hljs-subst">${<span id="lsif6112">t</span>.<span id="lsif6114">name</span>}</span>.html&quot;&gt;<span class="hljs-subst">${<span id="lsif6116">t</span>.<span id="lsif6118">name</span>}</span>&lt;/a&gt;&lt;/li&gt;`</span>;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-string">`&lt;li&gt;<span class="hljs-subst">${<span id="lsif6120">t</span>.<span id="lsif6122">name</span>}</span>&lt;ul&gt;<span class="hljs-subst">${<span id="lsif6131">g</span>(<span id="lsif6133">t</span>.<span id="lsif6135">children</span>, <span id="lsif6137">p</span>[<span class="hljs-number">0</span>] === <span id="lsif6139">t</span>.<span id="lsif6141">name</span> ? <span id="lsif6143">p</span>.<span id="lsif6145">slice</span>(<span class="hljs-number">1</span>) : [], <span class="hljs-string">`<span class="hljs-subst">${<span id="lsif6147">k</span>}</span>/<span class="hljs-subst">${<span id="lsif6149">t</span>.<span id="lsif6151">name</span>}</span>`</span>)}</span>&lt;/ul&gt;&lt;/li&gt;`</span>;
+  };
+  <span class="hljs-keyword">const</span> <span class="hljs-title function_"><span id="lsif6127">g</span></span> = (<span class="hljs-params"><span id="lsif6156">x</span>: <span id="lsif6160">TreeNode</span>[], <span id="lsif6165">p</span>: <span class="hljs-built_in">string</span>[], <span id="lsif6172">k</span>: <span class="hljs-built_in">string</span></span>) <span id="lsif6179">=&gt;</span> <span id="lsif6181">x</span>.<span class="hljs-title function_"><span id="lsif6183">map</span></span>(<span class="hljs-function">(<span class="hljs-params"><span id="lsif6188">y</span></span>) <span id="lsif6195">=&gt;</span></span> <span class="hljs-title function_"><span id="lsif6197">f</span></span>(<span id="lsif6199">y</span>, <span id="lsif6201">p</span>, <span id="lsif6203">k</span>)).<span class="hljs-title function_"><span id="lsif6215">join</span></span>(<span class="hljs-string">&#x27;&#x27;</span>);
+  <span class="hljs-keyword">return</span> <span class="hljs-string">`&lt;ul&gt;<span class="hljs-subst">${<span id="lsif6217">g</span>(<span id="lsif6219">tree</span>, <span id="lsif6221">path</span>, <span class="hljs-string">&#x27;.&#x27;</span>)}</span>&lt;/ul&gt;`</span>;
+};
+
+<span class="hljs-keyword">type</span> <span class="hljs-title class_"><span id="lsif6226">ItemData</span></span> = <span class="hljs-built_in">string</span>;
+
+<span class="hljs-keyword">const</span> <span id="lsif6233">isContains</span> = (<span class="hljs-attr"><span id="lsif6240">x</span></span>: <span class="hljs-title class_"><span id="lsif6244">Element</span></span>): <span id="lsif6246">x</span> is <span id="lsif6248">contains</span> <span id="lsif6253">=&gt;</span> {
+  <span class="hljs-keyword">return</span> <span id="lsif6255">x</span>.<span class="hljs-property"><span id="lsif6261">label</span></span> == <span class="hljs-string">&#x27;contains&#x27;</span>;
+};
+
+<span class="hljs-keyword">const</span> <span id="lsif6266">getItemData</span> = (<span class="hljs-attr"><span id="lsif6273">item</span></span>: <span class="hljs-title class_"><span id="lsif6277">Range</span></span>, <span class="hljs-attr"><span id="lsif6282">lsif</span></span>: <span class="hljs-title class_"><span id="lsif6286">Lsif</span></span>): <span class="hljs-function"><span class="hljs-params"><span id="lsif6288">ItemData</span></span> <span id="lsif6293">=&gt;</span></span> {
+  <span class="hljs-keyword">const</span> { <span id="lsif6298">uri</span> } = <span id="lsif6302">lsif</span>.<span class="hljs-property"><span id="lsif6304">item</span></span>.<span class="hljs-title function_"><span id="lsif6306">get</span></span>(
+    <span id="lsif6308">lsif</span>.<span class="hljs-property"><span id="lsif6310">inV</span></span>.<span class="hljs-title function_"><span id="lsif6312">get</span></span>(<span id="lsif6314">item</span>.<span class="hljs-property"><span id="lsif6316">id</span></span>).<span class="hljs-title function_"><span id="lsif6318">filter</span></span>(<span id="lsif6320">isContains</span>)[<span class="hljs-number">0</span>].<span class="hljs-property"><span id="lsif6322">outV</span></span>
+  ) <span class="hljs-keyword">as</span> <span class="hljs-title class_"><span id="lsif6324">Document</span></span>;
+  <span class="hljs-keyword">const</span> <span id="lsif6329">path</span> = <span class="hljs-string">`<span class="hljs-subst">${<span id="lsif6333">lsif</span>.<span id="lsif6335">uriPath</span>(<span id="lsif6337">uri</span>)}</span>.html`</span>;
+  <span class="hljs-keyword">const</span> <span id="lsif6342">url</span> = <span class="hljs-string">`<span class="hljs-subst">${<span id="lsif6346">path</span>}</span>#<span class="hljs-subst">${<span id="lsif6348">item</span>.<span id="lsif6360">start</span>.<span id="lsif6372">line</span> + <span class="hljs-number">1</span>}</span>`</span>;
+  <span class="hljs-keyword">return</span> <span id="lsif6374">url</span>;
+};
+
+<span class="hljs-keyword">type</span> <span class="hljs-title class_"><span id="lsif6379">Hovers</span></span> = <span id="lsif6430">{
+  <span id="lsif6425">[<span class="hljs-attr"><span id="lsif6386">s</span></span>: <span class="hljs-built_in">string</span>]: <span id="lsif6420">{
+    <span id="lsif6393">content</span>?: <span class="hljs-title class_"><span id="lsif6397">Id</span></span>;
+    <span id="lsif6402">definition</span>?: <span class="hljs-title class_"><span id="lsif6406">Id</span></span>;
+    <span id="lsif6411">references</span>?: <span class="hljs-title class_"><span id="lsif6415">Id</span></span>;
+  }</span>;</span>
+}</span>;
+
+<span class="hljs-keyword">type</span> <span class="hljs-title class_"><span id="lsif6435">ObjString</span></span> = <span id="lsif6456">{
+  <span id="lsif6451">[<span class="hljs-attr"><span id="lsif6442">s</span></span>: <span class="hljs-built_in">string</span>]: <span class="hljs-title class_"><span id="lsif6446">Id</span></span>;</span>
+}</span>;
+
+<span class="hljs-keyword">type</span> <span class="hljs-title class_"><span id="lsif6461">References</span></span> = <span id="lsif6503">{
+  <span id="lsif6498">[<span class="hljs-attr"><span id="lsif6468">s</span></span>: <span class="hljs-built_in">string</span>]: <span id="lsif6493">{
+    <span class="hljs-attr"><span id="lsif6475">definitions</span></span>: <span class="hljs-title class_"><span id="lsif6479">ItemData</span></span>[];
+    <span class="hljs-attr"><span id="lsif6484">references</span></span>: <span class="hljs-title class_"><span id="lsif6488">ItemData</span></span>[];
+  }</span>;</span>
+}</span>;
+
+<span class="hljs-keyword">type</span> <span class="hljs-title class_"><span id="lsif6508">MainOptions</span></span> = <span id="lsif6543">{
+  <span class="hljs-attr"><span id="lsif6515">input</span></span>: <span class="hljs-built_in">string</span>;
+  <span class="hljs-attr"><span id="lsif6522">output</span></span>: <span class="hljs-built_in">string</span>;
+  <span id="lsif6529">dist</span>?: <span class="hljs-built_in">string</span>;
+  <span id="lsif6536">uriMap</span>?: <span class="hljs-built_in">string</span>;
+}</span>;
+
+<span class="hljs-keyword">const</span> <span class="hljs-title function_"><span id="lsif6548">markedStringToHtml</span></span> = (<span class="hljs-params"><span id="lsif6555">x</span>: <span id="lsif6559">MarkedString</span></span>) <span id="lsif6564">=&gt;</span> {
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> <span id="lsif6566">x</span> === <span class="hljs-string">&#x27;string&#x27;</span>) {
+    <span class="hljs-keyword">return</span> <span id="lsif6568">x</span>;
+  }
+  <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;\n\n```&quot;</span> + <span id="lsif6570">x</span>.<span class="hljs-property"><span id="lsif6582">language</span></span> + <span class="hljs-string">&quot;\n&quot;</span> + <span id="lsif6584">x</span>.<span class="hljs-property"><span id="lsif6596">value</span></span>.<span class="hljs-title function_"><span id="lsif6608">trim</span></span>() + <span class="hljs-string">&quot;\n```\n\n&quot;</span>;
+};
+
+<span class="hljs-keyword">const</span> <span class="hljs-title function_"><span id="lsif6613">hoverToHtml</span></span> = (<span class="hljs-params"><span id="lsif6620">hover</span>: <span id="lsif6624">MarkupContent</span> | <span id="lsif6626">MarkedString</span> | <span id="lsif6628">MarkedString</span>[]</span>) <span id="lsif6633">=&gt;</span> {
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> <span id="lsif6635">hover</span> === <span class="hljs-string">&#x27;string&#x27;</span> || <span class="hljs-string">&#x27;language&#x27;</span> <span class="hljs-keyword">in</span> <span id="lsif6637">hover</span>) {
+    <span class="hljs-keyword">return</span> <span id="lsif6639">markdown</span>.<span class="hljs-title function_"><span id="lsif6648">render</span></span>(<span class="hljs-title function_"><span id="lsif6650">markedStringToHtml</span></span>(<span id="lsif6652">hover</span>));
+  }
+  <span class="hljs-keyword">if</span> (<span id="lsif6654">hover</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_"><span id="lsif6681">Array</span></span>) {
+    <span class="hljs-keyword">return</span> <span id="lsif6683">markdown</span>.<span class="hljs-title function_"><span id="lsif6685">render</span></span>(<span id="lsif6687">hover</span>.<span class="hljs-title function_"><span id="lsif6689">map</span></span>(<span id="lsif6691">markedStringToHtml</span>).<span class="hljs-title function_"><span id="lsif6693">join</span></span>(<span class="hljs-string">&#x27;\n\n---\n\n&#x27;</span>));
+  }
+  <span class="hljs-keyword">if</span> (<span id="lsif6695">hover</span>.<span class="hljs-property"><span id="lsif6707">kind</span></span> === <span class="hljs-string">&#x27;markdown&#x27;</span>) {
+    <span class="hljs-keyword">return</span> <span id="lsif6709">markdown</span>.<span class="hljs-title function_"><span id="lsif6711">render</span></span>(<span id="lsif6713">hover</span>.<span class="hljs-property"><span id="lsif6725">value</span></span>);
+  }
+  <span class="hljs-keyword">if</span> (<span id="lsif6727">hover</span>.<span class="hljs-property"><span id="lsif6729">kind</span></span> === <span class="hljs-string">&#x27;plaintext&#x27;</span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-string">`&lt;p&gt;<span class="hljs-subst">${<span id="lsif6731">hover</span>.<span id="lsif6733">value</span>}</span>&lt;/p&gt;`</span>;
+  }
+  <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_"><span id="lsif6735">Error</span></span>(<span class="hljs-string">&quot;bad hover content&quot;</span>);
+};
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span id="lsif6743">main</span> = <span class="hljs-keyword">async</span> ({ <span id="lsif6750">input</span>, <span id="lsif6757">output</span>, <span id="lsif6764">dist</span>, <span id="lsif6771">uriMap</span> }: <span class="hljs-title class_"><span id="lsif6775">MainOptions</span></span>) <span id="lsif6780">=&gt;</span> {
+  <span class="hljs-keyword">let</span> <span id="lsif6785">bench</span> = <span class="hljs-title function_"><span id="lsif6789">start</span></span>(<span class="hljs-string">&#x27;Reading files and cleaning&#x27;</span>);
+  <span class="hljs-keyword">const</span> <span id="lsif6794">lsif</span> = <span class="hljs-keyword">await</span> <span class="hljs-title function_"><span id="lsif6798">lsifParser</span></span>(<span id="lsif6800">input</span>, <span id="lsif6802">uriMap</span>);
+  <span class="hljs-keyword">const</span> { <span id="lsif6807">item</span>, <span id="lsif6814">uriPath</span>, <span id="lsif6821">documents</span>, <span id="lsif6828">srcMap</span>, <span id="lsif6835">outV</span> } = <span id="lsif6839">lsif</span>;
+  <span class="hljs-keyword">const</span> <span id="lsif6844">templates</span> = <span class="hljs-keyword">await</span> <span class="hljs-title function_"><span id="lsif6848">templatesBuilder</span></span>();
+  <span class="hljs-keyword">const</span> <span id="lsif6853">fileTree</span> = <span class="hljs-title function_"><span id="lsif6857">buildTree</span></span>(<span id="lsif6859">documents</span>.<span class="hljs-title function_"><span id="lsif6861">map</span></span>(<span class="hljs-function">(<span class="hljs-params"><span id="lsif6866">x</span></span>) <span id="lsif6873">=&gt;</span></span> <span class="hljs-title function_"><span id="lsif6875">uriPath</span></span>(<span id="lsif6877">x</span>.<span class="hljs-property"><span id="lsif6879">uri</span></span>)));
+  <span class="hljs-keyword">await</span> <span class="hljs-title function_"><span id="lsif6881">rm</span></span>(<span id="lsif6883">output</span>, <span id="lsif6902">{ <span class="hljs-attr"><span id="lsif6888">recursive</span></span>: <span class="hljs-literal">true</span>, <span class="hljs-attr"><span id="lsif6895">force</span></span>: <span class="hljs-literal">true</span> }</span>);
+  <span class="hljs-keyword">await</span> <span class="hljs-title function_"><span id="lsif6904">myWriteFile</span></span>(
+    <span class="hljs-title function_"><span id="lsif6906">join</span></span>(<span id="lsif6908">output</span>, <span class="hljs-string">&#x27;index.html&#x27;</span>),
+    <span id="lsif6910">templates</span>.<span class="hljs-title function_"><span id="lsif6912">welcome</span></span>(<span id="lsif6928">{
+      <span class="hljs-attr"><span id="lsif6917">tree</span></span>: <span class="hljs-title function_"><span id="lsif6921">treeToHtml</span></span>(<span id="lsif6923">fileTree</span>, <span class="hljs-string">&#x27;never$#.gav&#x27;</span>),
+    }</span>),
+  );
+  <span class="hljs-keyword">await</span> <span class="hljs-title function_"><span id="lsif6930">myWriteFile</span></span>(<span class="hljs-title function_"><span id="lsif6932">join</span></span>(<span id="lsif6934">output</span>, <span class="hljs-string">&#x27;_dist&#x27;</span>, <span class="hljs-string">&#x27;main.css&#x27;</span>), (<span class="hljs-keyword">await</span> <span class="hljs-title function_"><span id="lsif6936">readFile</span></span>(<span class="hljs-title function_"><span id="lsif6938">join</span></span>(<span id="lsif6940">distFolder</span>, <span class="hljs-string">&#x27;main.css&#x27;</span>))).<span class="hljs-title function_"><span id="lsif6942">toString</span></span>());
+  <span class="hljs-keyword">await</span> <span class="hljs-title function_"><span id="lsif6944">myWriteFile</span></span>(<span class="hljs-title function_"><span id="lsif6946">join</span></span>(<span id="lsif6948">output</span>, <span class="hljs-string">&#x27;_dist&#x27;</span>, <span class="hljs-string">&#x27;main.js&#x27;</span>), (<span class="hljs-keyword">await</span> <span class="hljs-title function_"><span id="lsif6950">readFile</span></span>(<span class="hljs-title function_"><span id="lsif6952">join</span></span>(<span id="lsif6954">distFolder</span>, <span class="hljs-string">&#x27;main.js&#x27;</span>))).<span class="hljs-title function_"><span id="lsif6956">toString</span></span>());
+  <span class="hljs-keyword">await</span> <span class="hljs-title function_"><span id="lsif6958">myWriteFile</span></span>(<span class="hljs-title function_"><span id="lsif6960">join</span></span>(<span id="lsif6962">output</span>, <span class="hljs-string">&#x27;.nojekyll&#x27;</span>), <span class="hljs-string">&#x27;&#x27;</span>);
+  <span id="lsif6964">bench</span>.<span class="hljs-title function_"><span id="lsif6966">end</span></span>();
+  <span id="lsif6968">bench</span> = <span class="hljs-title function_"><span id="lsif6970">start</span></span>(<span class="hljs-string">&#x27;Parsing lsif dump&#x27;</span>);
+  <span class="hljs-keyword">const</span> <span class="hljs-attr"><span id="lsif6975">refs</span></span>: <span class="hljs-title class_"><span id="lsif6992">Set</span></span>&lt;<span class="hljs-title class_"><span id="lsif6994">Id</span></span>&gt; = <span class="hljs-keyword">new</span> <span class="hljs-title class_"><span id="lsif6996">Set</span></span>();
+  <span class="hljs-keyword">const</span> <span id="lsif7001">lsifParsed</span> = <span class="hljs-keyword">await</span> <span class="hljs-title class_"><span id="lsif7005">Promise</span></span>.<span class="hljs-title function_"><span id="lsif7007">all</span></span>(<span id="lsif7009">documents</span>
+    .<span class="hljs-title function_"><span id="lsif7011">map</span></span>(<span class="hljs-keyword">async</span> (<span id="lsif7016">doc</span>) <span id="lsif7023">=&gt;</span> {
+      <span class="hljs-keyword">const</span> <span class="hljs-attr"><span id="lsif7028">additions</span></span>: <span class="hljs-title class_"><span id="lsif7032">Addition</span></span>[] = [];
+      <span class="hljs-keyword">const</span> <span class="hljs-attr"><span id="lsif7037">hovers</span></span>: <span class="hljs-title class_"><span id="lsif7041">Hovers</span></span> = <span id="lsif7046">{}</span>;
+      <span class="hljs-keyword">const</span> <span class="hljs-attr"><span id="lsif7051">data</span></span>: <span class="hljs-title class_"><span id="lsif7055">ObjString</span></span> = <span id="lsif7060">{}</span>;
+      <span class="hljs-keyword">const</span> <span class="hljs-title function_"><span id="lsif7065">setDataLazy</span></span> = (<span class="hljs-params"><span id="lsif7072">key</span>: <span id="lsif7076">Id</span>, <span id="lsif7081">lazy</span>: <span id="lsif7088">() =&gt; <span class="hljs-built_in">string</span></span></span>) <span id="lsif7093">=&gt;</span> {
+        <span class="hljs-keyword">if</span> (<span id="lsif7095">key</span> <span class="hljs-keyword">in</span> <span id="lsif7097">data</span>) <span class="hljs-keyword">return</span>;
+        <span id="lsif7099">data</span>[<span id="lsif7101">key</span>] = <span class="hljs-title function_"><span id="lsif7103">lazy</span></span>();
+      };
+      <span id="lsif7105">outV</span>.<span class="hljs-title function_"><span id="lsif7107">get</span></span>(<span id="lsif7109">doc</span>.<span class="hljs-property"><span id="lsif7111">id</span></span>).<span class="hljs-title function_"><span id="lsif7113">forEach</span></span>(<span class="hljs-function">(<span class="hljs-params"><span id="lsif7118">edge</span></span>) <span id="lsif7125">=&gt;</span></span> {
+        <span class="hljs-keyword">const</span> <span id="lsif7130">path</span> = <span class="hljs-title function_"><span id="lsif7134">uriPath</span></span>(<span id="lsif7136">doc</span>.<span class="hljs-property"><span id="lsif7138">uri</span></span>);
+        <span class="hljs-keyword">if</span> (<span id="lsif7140">edge</span>.<span class="hljs-property"><span id="lsif7142">label</span></span> != <span class="hljs-string">&#x27;contains&#x27;</span>) {
+          <span class="hljs-keyword">return</span>;
+        }
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> <span id="lsif7147">id</span> <span class="hljs-keyword">of</span> <span id="lsif7151">edge</span>.<span class="hljs-property"><span id="lsif7153">inVs</span></span>) {
+          <span class="hljs-keyword">const</span> <span id="lsif7158">v</span> = <span id="lsif7162">item</span>.<span class="hljs-title function_"><span id="lsif7164">get</span></span>(<span id="lsif7166">id</span>) <span class="hljs-keyword">as</span> <span class="hljs-title class_"><span id="lsif7168">Range</span></span>;
+          <span class="hljs-keyword">if</span> (<span id="lsif7170">v</span>.<span class="hljs-property"><span id="lsif7172">start</span></span>.<span class="hljs-property"><span id="lsif7184">character</span></span> === <span id="lsif7186">v</span>.<span class="hljs-property"><span id="lsif7198">end</span></span>.<span class="hljs-property"><span id="lsif7200">character</span></span> &amp;&amp; <span id="lsif7202">v</span>.<span class="hljs-property"><span id="lsif7204">start</span></span>.<span class="hljs-property"><span id="lsif7206">line</span></span> === <span id="lsif7208">v</span>.<span class="hljs-property"><span id="lsif7210">end</span></span>.<span class="hljs-property"><span id="lsif7212">line</span></span>) {
+            <span class="hljs-keyword">continue</span>;
+          }
+          <span class="hljs-keyword">let</span> <span class="hljs-attr"><span id="lsif7217">hoverContent</span></span>: <span class="hljs-title class_"><span id="lsif7221">Id</span></span> | <span class="hljs-literal">undefined</span> = <span class="hljs-literal"><span id="lsif7223">undefined</span></span>;
+          <span class="hljs-keyword">let</span> <span class="hljs-attr"><span id="lsif7228">definitionPlace</span></span>: <span class="hljs-title class_"><span id="lsif7232">Id</span></span> | <span class="hljs-literal">undefined</span> = <span class="hljs-literal"><span id="lsif7234">undefined</span></span>;
+          <span class="hljs-keyword">let</span> <span id="lsif7239">ref</span> = <span class="hljs-literal"><span id="lsif7243">undefined</span></span>;
+          <span class="hljs-keyword">const</span> <span id="lsif7248">defVertex</span> = <span class="hljs-title function_"><span id="lsif7252">findRecursiveEdge</span></span>(<span id="lsif7254">lsif</span>, <span id="lsif7256">v</span>.<span class="hljs-property"><span id="lsif7258">id</span></span>, <span class="hljs-string">&#x27;textDocument/definition&#x27;</span>);
+          <span class="hljs-keyword">if</span> (<span id="lsif7260">defVertex</span>) {
+            <span class="hljs-keyword">const</span> <span id="lsif7265">defItemEdge</span> = <span id="lsif7269">outV</span>.<span class="hljs-title function_"><span id="lsif7271">get</span></span>(<span id="lsif7273">defVertex</span>.<span class="hljs-property"><span id="lsif7275">id</span></span>)[<span class="hljs-number">0</span>] <span class="hljs-keyword">as</span> <span id="lsif7277">item</span>;
+            <span class="hljs-keyword">const</span> <span id="lsif7282">defItem</span> = <span id="lsif7286">item</span>.<span class="hljs-title function_"><span id="lsif7288">get</span></span>(<span id="lsif7290">defItemEdge</span>.<span class="hljs-property"><span id="lsif7292">inVs</span></span>[<span class="hljs-number">0</span>]) <span class="hljs-keyword">as</span> <span class="hljs-title class_"><span id="lsif7294">Range</span></span>;
+            <span class="hljs-keyword">if</span> (<span id="lsif7296">defItem</span>.<span class="hljs-property"><span id="lsif7298">id</span></span> != <span id="lsif7300">v</span>.<span class="hljs-property"><span id="lsif7302">id</span></span>) {
+              <span class="hljs-title function_"><span id="lsif7304">setDataLazy</span></span>(<span id="lsif7306">defItem</span>.<span class="hljs-property"><span id="lsif7308">id</span></span>, <span class="hljs-function">() <span id="lsif7313">=&gt;</span></span> <span class="hljs-title function_"><span id="lsif7315">getItemData</span></span>(<span id="lsif7317">defItem</span>, <span id="lsif7319">lsif</span>));
+              <span id="lsif7321">definitionPlace</span> = <span id="lsif7323">defItem</span>.<span class="hljs-property"><span id="lsif7325">id</span></span>;
+            }
+          }
+          <span class="hljs-keyword">const</span> <span id="lsif7330">hoverVertex</span> = <span class="hljs-title function_"><span id="lsif7334">findRecursiveEdge</span></span>(<span id="lsif7336">lsif</span>, <span id="lsif7338">v</span>.<span class="hljs-property"><span id="lsif7340">id</span></span>, <span class="hljs-string">&#x27;textDocument/hover&#x27;</span>) <span class="hljs-keyword">as</span> <span class="hljs-title class_"><span id="lsif7342">HoverResult</span></span> | <span class="hljs-literal">undefined</span>;
+          <span class="hljs-keyword">if</span> (<span id="lsif7344">hoverVertex</span>) {
+            <span class="hljs-title function_"><span id="lsif7346">setDataLazy</span></span>(<span id="lsif7348">hoverVertex</span>.<span class="hljs-property"><span id="lsif7350">id</span></span>, <span class="hljs-function">() <span id="lsif7355">=&gt;</span></span> <span class="hljs-title function_"><span id="lsif7357">hoverToHtml</span></span>(<span id="lsif7359">hoverVertex</span>.<span class="hljs-property"><span id="lsif7371">result</span></span>.<span class="hljs-property"><span id="lsif7383">contents</span></span>));
+            <span id="lsif7385">hoverContent</span> = <span id="lsif7387">hoverVertex</span>.<span class="hljs-property"><span id="lsif7389">id</span></span>;
+          }
+          <span class="hljs-keyword">const</span> <span id="lsif7394">refVertex</span> = <span class="hljs-title function_"><span id="lsif7398">findRecursiveEdge</span></span>(<span id="lsif7400">lsif</span>, <span id="lsif7402">v</span>.<span class="hljs-property"><span id="lsif7404">id</span></span>, <span class="hljs-string">&#x27;textDocument/references&#x27;</span>);
+          <span class="hljs-keyword">if</span> (<span id="lsif7406">refVertex</span>) {
+            <span id="lsif7408">refs</span>.<span class="hljs-title function_"><span id="lsif7420">add</span></span>(<span id="lsif7422">refVertex</span>.<span class="hljs-property"><span id="lsif7424">id</span></span>);
+            <span id="lsif7426">ref</span> = <span id="lsif7428">refVertex</span>.<span class="hljs-property"><span id="lsif7430">id</span></span>;
+          }
+          <span class="hljs-keyword">if</span> (<span id="lsif7432">hoverContent</span> || <span id="lsif7434">definitionPlace</span> || <span id="lsif7436">ref</span>) {
+            <span id="lsif7438">hovers</span>[<span class="hljs-string">`x<span class="hljs-subst">${<span id="lsif7440">v</span>.<span id="lsif7442">id</span>}</span>`</span>] = <span id="lsif7474">{
+              <span class="hljs-attr"><span id="lsif7447">content</span></span>: <span id="lsif7451">hoverContent</span>,
+              <span class="hljs-attr"><span id="lsif7456">definition</span></span>: <span id="lsif7460">definitionPlace</span>,
+              <span class="hljs-attr"><span id="lsif7465">references</span></span>: <span id="lsif7469">ref</span>,
+            }</span>;
+            <span id="lsif7476">additions</span>.<span class="hljs-title function_"><span id="lsif7478">push</span></span>(<span id="lsif7505">{
+              <span class="hljs-attr"><span id="lsif7483">position</span></span>: <span id="lsif7487">v</span>.<span class="hljs-property"><span id="lsif7489">start</span></span>,
+              <span class="hljs-attr"><span id="lsif7494">text</span></span>: <span class="hljs-string">`&lt;span id=&quot;lsif<span class="hljs-subst">${<span id="lsif7498">v</span>.<span id="lsif7500">id</span>}</span>&quot;&gt;`</span>
+            }</span>);
+            <span id="lsif7507">additions</span>.<span class="hljs-title function_"><span id="lsif7509">push</span></span>(<span id="lsif7532">{
+              <span class="hljs-attr"><span id="lsif7514">position</span></span>: <span id="lsif7518">v</span>.<span class="hljs-property"><span id="lsif7520">end</span></span>,
+              <span class="hljs-attr"><span id="lsif7525">text</span></span>: <span class="hljs-string">&#x27;&lt;/span&gt;&#x27;</span>,
+            }</span>);
+          }
+        }
+      });
+      <span class="hljs-keyword">const</span> <span id="lsif7537">relPath</span> = <span class="hljs-title function_"><span id="lsif7541">uriPath</span></span>(<span id="lsif7543">doc</span>.<span class="hljs-property"><span id="lsif7545">uri</span></span>);
+      <span class="hljs-keyword">const</span> <span id="lsif7550">destPath</span> = <span class="hljs-title function_"><span id="lsif7554">join</span></span>(<span id="lsif7556">output</span>, <span id="lsif7558">relPath</span>);
+      <span class="hljs-keyword">await</span> <span class="hljs-title function_"><span id="lsif7560">myWriteFile</span></span>(<span id="lsif7562">destPath</span> + <span class="hljs-string">&quot;.hover.json&quot;</span>, <span class="hljs-variable constant_"><span id="lsif7564">JSON</span></span>.<span class="hljs-title function_"><span id="lsif7578">stringify</span></span>(<span id="lsif7597">{ <span id="lsif7583">hovers</span>, <span id="lsif7590">data</span> }</span>));
+      <span class="hljs-keyword">return</span> <span id="lsif7623">{ <span id="lsif7602">destPath</span>, <span id="lsif7609">doc</span>, <span id="lsif7616">additions</span> }</span>;
+    }));
+  <span id="lsif7625">bench</span>.<span class="hljs-title function_"><span id="lsif7627">end</span></span>();
+  <span id="lsif7629">bench</span> = <span class="hljs-title function_"><span id="lsif7631">start</span></span>(<span class="hljs-string">&#x27;Create find references files&#x27;</span>);
+  <span class="hljs-keyword">const</span> <span id="lsif7636">refFolder</span> = <span class="hljs-title function_"><span id="lsif7640">join</span></span>(<span id="lsif7642">output</span>, <span class="hljs-string">&#x27;_data&#x27;</span>, <span class="hljs-string">&#x27;refs&#x27;</span>);
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> <span id="lsif7647">id</span> <span class="hljs-keyword">of</span> <span id="lsif7651">refs</span>) {
+    <span class="hljs-keyword">const</span> <span id="lsif7656">edge</span> = <span id="lsif7660">outV</span>.<span class="hljs-title function_"><span id="lsif7662">get</span></span>(<span id="lsif7664">id</span>) <span class="hljs-keyword">as</span> <span class="hljs-title class_"><span id="lsif7666">ItemEdge</span></span>&lt;<span class="hljs-title class_"><span id="lsif7668">ReferenceResult</span></span>, <span class="hljs-title class_"><span id="lsif7670">Range</span></span>&gt;[];
+    <span class="hljs-keyword">const</span> <span id="lsif7675">defEdge</span> = <span id="lsif7679">edge</span>.<span class="hljs-title function_"><span id="lsif7681">filter</span></span>(<span class="hljs-function">(<span class="hljs-params"><span id="lsif7686">x</span></span>) <span id="lsif7693">=&gt;</span></span> <span id="lsif7695">x</span>.<span class="hljs-property"><span id="lsif7764">property</span></span> === <span class="hljs-string">&#x27;definitions&#x27;</span>);
+    <span class="hljs-keyword">const</span> <span id="lsif7769">refEdge</span> = <span id="lsif7773">edge</span>.<span class="hljs-title function_"><span id="lsif7775">filter</span></span>(<span class="hljs-function">(<span class="hljs-params"><span id="lsif7780">x</span></span>) <span id="lsif7787">=&gt;</span></span> <span id="lsif7789">x</span>.<span class="hljs-property"><span id="lsif7791">property</span></span> === <span class="hljs-string">&#x27;references&#x27;</span>);
+    <span class="hljs-keyword">await</span> <span class="hljs-title function_"><span id="lsif7793">myWriteFile</span></span>(<span class="hljs-string">`<span class="hljs-subst">${<span id="lsif7795">refFolder</span>}</span>/<span class="hljs-subst">${<span id="lsif7797">id</span>}</span>.json`</span>, <span class="hljs-variable constant_"><span id="lsif7799">JSON</span></span>.<span class="hljs-title function_"><span id="lsif7801">stringify</span></span>(<span id="lsif7926">{
+      <span class="hljs-attr"><span id="lsif7806">definitions</span></span>: <span id="lsif7810">defEdge</span>.<span class="hljs-title function_"><span id="lsif7822">flatMap</span></span>(<span class="hljs-function">(<span class="hljs-params"><span id="lsif7827">e</span></span>) <span id="lsif7834">=&gt;</span></span> {
+        <span class="hljs-keyword">return</span> <span id="lsif7836">e</span>.<span class="hljs-property"><span id="lsif7838">inVs</span></span>.<span class="hljs-title function_"><span id="lsif7840">map</span></span>(<span class="hljs-function">(<span class="hljs-params"><span id="lsif7845">x</span>: <span id="lsif7849">Id</span></span>) <span id="lsif7854">=&gt;</span></span> {
+          <span class="hljs-keyword">return</span> <span class="hljs-title function_"><span id="lsif7856">getItemData</span></span>(<span id="lsif7858">item</span>.<span class="hljs-title function_"><span id="lsif7860">get</span></span>(<span id="lsif7862">x</span>) <span class="hljs-keyword">as</span> <span class="hljs-title class_"><span id="lsif7864">Range</span></span>, <span id="lsif7866">lsif</span>);
+        });
+      }),
+      <span class="hljs-attr"><span id="lsif7871">references</span></span>: <span id="lsif7875">refEdge</span>.<span class="hljs-title function_"><span id="lsif7877">flatMap</span></span>(<span class="hljs-function">(<span class="hljs-params"><span id="lsif7882">e</span></span>) <span id="lsif7889">=&gt;</span></span> {
+        <span class="hljs-keyword">return</span> <span id="lsif7891">e</span>.<span class="hljs-property"><span id="lsif7893">inVs</span></span>.<span class="hljs-title function_"><span id="lsif7895">map</span></span>(<span class="hljs-function">(<span class="hljs-params"><span id="lsif7900">x</span>: <span id="lsif7904">Id</span></span>) <span id="lsif7909">=&gt;</span></span> {
+          <span class="hljs-keyword">return</span> <span class="hljs-title function_"><span id="lsif7911">getItemData</span></span>(<span id="lsif7913">item</span>.<span class="hljs-title function_"><span id="lsif7915">get</span></span>(<span id="lsif7917">x</span>) <span class="hljs-keyword">as</span> <span class="hljs-title class_"><span id="lsif7919">Range</span></span>, <span id="lsif7921">lsif</span>);
+        });
+      }),
+    }</span>));
+  }
+  <span id="lsif7928">bench</span>.<span class="hljs-title function_"><span id="lsif7930">end</span></span>();
+  <span id="lsif7932">bench</span> = <span class="hljs-title function_"><span id="lsif7934">start</span></span>(<span class="hljs-string">&#x27;Syntax highlighting&#x27;</span>);
+  <span class="hljs-keyword">const</span> <span id="lsif7939">highlighted</span> = <span id="lsif7943">lsifParsed</span>.<span class="hljs-title function_"><span id="lsif7945">map</span></span>(<span class="hljs-function">(<span class="hljs-params"><span id="lsif7950">x</span></span>) <span id="lsif7957">=&gt;</span></span> {
+    <span class="hljs-keyword">const</span> <span id="lsif7962">srcRaw</span> = <span id="lsif7966">srcMap</span>.<span class="hljs-title function_"><span id="lsif7968">raw</span></span>(<span id="lsif7970">x</span>.<span class="hljs-property"><span id="lsif7972">doc</span></span>.<span class="hljs-property"><span id="lsif7974">uri</span></span>);
+    <span class="hljs-keyword">const</span> <span id="lsif7979">highlighted</span> = <span id="lsif7983">hljs</span>.<span class="hljs-title function_"><span id="lsif7985">highlight</span></span>(<span id="lsif7987">srcRaw</span>, <span id="lsif8015">{ <span class="hljs-attr"><span id="lsif7992">language</span></span>: <span id="lsif7996">x</span>.<span class="hljs-property"><span id="lsif7998">doc</span></span>.<span class="hljs-property"><span id="lsif8010">languageId</span></span> }</span>).<span class="hljs-property"><span id="lsif8017">value</span></span>;
+    <span class="hljs-keyword">return</span> <span id="lsif8031">{ ...<span id="lsif8019">x</span>, <span id="lsif8024">highlighted</span> }</span>;
+  });
+  <span id="lsif8033">bench</span>.<span class="hljs-title function_"><span id="lsif8035">end</span></span>();
+  <span id="lsif8037">bench</span> = <span class="hljs-title function_"><span id="lsif8039">start</span></span>(<span class="hljs-string">&#x27;Adding additions&#x27;</span>);
+  <span class="hljs-keyword">const</span> <span id="lsif8044">added</span> = <span id="lsif8048">highlighted</span>.<span class="hljs-title function_"><span id="lsif8050">map</span></span>(<span class="hljs-function">(<span class="hljs-params"><span id="lsif8055">x</span></span>) <span id="lsif8062">=&gt;</span></span> {
+    <span class="hljs-keyword">const</span> <span id="lsif8067">src</span> = <span class="hljs-title function_"><span id="lsif8071">putInSrc</span></span>(<span id="lsif8073">x</span>.<span class="hljs-property"><span id="lsif8075">highlighted</span></span>, <span id="lsif8077">x</span>.<span class="hljs-property"><span id="lsif8079">additions</span></span>);
+    <span class="hljs-keyword">return</span> <span id="lsif8093">{ ...<span id="lsif8081">x</span>, <span id="lsif8086">src</span> }</span>;
+  });
+  <span id="lsif8095">bench</span>.<span class="hljs-title function_"><span id="lsif8097">end</span></span>();
+  <span id="lsif8099">bench</span> = <span class="hljs-title function_"><span id="lsif8101">start</span></span>(<span class="hljs-string">&#x27;Templating with EJS&#x27;</span>);
+  <span class="hljs-keyword">const</span> <span id="lsif8106">generated</span> = <span id="lsif8110">added</span>.<span class="hljs-title function_"><span id="lsif8112">map</span></span>(<span class="hljs-function">(<span class="hljs-params">{ <span id="lsif8117">doc</span>, <span id="lsif8124">destPath</span>, <span id="lsif8131">src</span> }</span>) <span id="lsif8138">=&gt;</span></span> {
+    <span class="hljs-keyword">const</span> <span id="lsif8143">path</span> = <span class="hljs-title function_"><span id="lsif8147">uriPath</span></span>(<span id="lsif8149">doc</span>.<span class="hljs-property"><span id="lsif8151">uri</span></span>);
+    <span class="hljs-keyword">const</span> <span id="lsif8156">pathSplitted</span> = <span id="lsif8160">path</span>.<span class="hljs-title function_"><span id="lsif8162">split</span></span>(<span class="hljs-string">&#x27;/&#x27;</span>);
+    <span class="hljs-keyword">const</span> <span id="lsif8167">filename</span> = <span id="lsif8171">pathSplitted</span>.<span class="hljs-title function_"><span id="lsif8173">slice</span></span>(-<span class="hljs-number">1</span>)[<span class="hljs-number">0</span>];
+    <span class="hljs-keyword">const</span> <span id="lsif8178">depth</span> = <span id="lsif8182">pathSplitted</span>.<span class="hljs-property"><span id="lsif8184">length</span></span> - <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">const</span> <span id="lsif8189">html</span> = <span id="lsif8193">templates</span>.<span class="hljs-title function_"><span id="lsif8195">source</span></span>(<span id="lsif8259">{
+      <span id="lsif8200">src</span>, <span id="lsif8207">filename</span>,
+      <span class="hljs-attr"><span id="lsif8214">tree</span></span>: <span class="hljs-title function_"><span id="lsif8218">treeToHtml</span></span>(<span id="lsif8220">fileTree</span>, <span id="lsif8222">path</span>),
+      <span class="hljs-attr"><span id="lsif8227">distPath</span></span>: <span id="lsif8231">dist</span> ? <span id="lsif8233">dist</span> : <span class="hljs-string">`_dist/`</span>,
+      <span class="hljs-attr"><span id="lsif8238">basePath</span></span>: <span class="hljs-string">`./<span class="hljs-subst">${<span class="hljs-string">&#x27;../&#x27;</span>.<span id="lsif8252">repeat</span>(<span id="lsif8254">depth</span>)}</span>`</span>,
+    }</span>);
+    <span class="hljs-keyword">return</span> <span id="lsif8285">{ <span id="lsif8264">html</span>, <span id="lsif8271">destPath</span>, <span id="lsif8278">src</span> }</span>;
+  });
+  <span id="lsif8287">bench</span>.<span class="hljs-title function_"><span id="lsif8289">end</span></span>();
+  <span id="lsif8291">bench</span> = <span class="hljs-title function_"><span id="lsif8293">start</span></span>(<span class="hljs-string">&#x27;Writing generated files&#x27;</span>);
+  <span class="hljs-keyword">await</span> <span class="hljs-title class_"><span id="lsif8295">Promise</span></span>.<span class="hljs-title function_"><span id="lsif8297">all</span></span>(<span id="lsif8299">generated</span>.<span class="hljs-title function_"><span id="lsif8301">map</span></span>(<span class="hljs-keyword">async</span> ({ <span id="lsif8306">destPath</span>, <span id="lsif8313">html</span>, <span id="lsif8320">src</span> }) <span id="lsif8327">=&gt;</span> {
+    <span class="hljs-keyword">await</span> <span class="hljs-title function_"><span id="lsif8329">myWriteFile</span></span>(<span id="lsif8331">destPath</span> + <span class="hljs-string">&quot;.html&quot;</span>, <span id="lsif8333">html</span>);
+    <span class="hljs-keyword">await</span> <span class="hljs-title function_"><span id="lsif8335">myWriteFile</span></span>(<span id="lsif8337">destPath</span> + <span class="hljs-string">&quot;.src.html&quot;</span>, <span id="lsif8339">src</span>);
+  }));
+  <span id="lsif8341">bench</span>.<span class="hljs-title function_"><span id="lsif8343">end</span></span>();
+};

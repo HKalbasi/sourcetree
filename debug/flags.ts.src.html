@@ -1,0 +1,9 @@
+<span class="hljs-keyword">const</span> <span class="hljs-attr"><span id="lsif18">flags</span></span>: <span class="hljs-title class_"><span id="lsif41">Map</span></span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">boolean</span>&gt; = <span class="hljs-keyword">new</span> <span class="hljs-title class_"><span id="lsif43">Map</span></span>();
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span class="hljs-title function_"><span id="lsif51">enableFlag</span></span> = (<span class="hljs-params"><span id="lsif58">flag</span>: <span class="hljs-built_in">string</span></span>) <span id="lsif65">=&gt;</span> {
+  <span id="lsif67">flags</span>.<span class="hljs-title function_"><span id="lsif79">set</span></span>(<span id="lsif81">flag</span>, <span class="hljs-literal">true</span>);
+};
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span class="hljs-title function_"><span id="lsif89">isEnabled</span></span> = (<span class="hljs-params"><span id="lsif96">flag</span>: <span class="hljs-built_in">string</span></span>) <span id="lsif103">=&gt;</span> {
+  <span class="hljs-keyword">return</span> <span id="lsif105">flags</span>.<span class="hljs-title function_"><span id="lsif117">get</span></span>(<span id="lsif119">flag</span>) === <span class="hljs-literal">true</span>;
+};
