@@ -1,8 +1,7 @@
-import { rm } from "fs/promises";
-import { join, relative } from "path";
+import { rm, readFile } from "fs/promises";
+import { join } from "path";
 import hljs from "highlight.js";
 import { putInSrc, Addition, myWriteFile } from "./util";
-import fsExtra from "fs-extra";
 import { distFolder } from "./paths";
 import { lsifParser, Lsif, findRecursiveEdge, Element } from "./lsif";
 import { buildTree, TreeNode } from "./tree";
@@ -10,9 +9,7 @@ import { templatesBuilder } from "./templates/index";
 import { start } from "./debug/bench";
 import MarkdownIt from "markdown-it";
 import { contains, Document, item, ItemEdge, ReferenceResult, Range, Id, HoverResult } from "lsif-protocol";
-import { MarkupContent, MarkedString, Position } from "vscode-languageserver-protocol";
-import { HtmlValidate } from "html-validate";
-import { isEnabled } from "./debug/flags";
+import { MarkupContent, MarkedString } from "vscode-languageserver-protocol";
 
 const markdown = MarkdownIt({
   highlight: (str, lang) => {
@@ -103,8 +100,6 @@ const hoverToHtml = (hover: MarkupContent | MarkedString | MarkedString[]) => {
   throw new Error("bad hover content");
 };
 
-const htmlValidate = new HtmlValidate();
-
 export const main = async ({ input, output, dist, uriMap }: MainOptions) => {
   let bench = start('Reading files and cleaning');
   const lsif = await lsifParser(input, uriMap);
@@ -118,7 +113,8 @@ export const main = async ({ input, output, dist, uriMap }: MainOptions) => {
       tree: treeToHtml(fileTree, 'never$#.gav'),
     }),
   );
-  await fsExtra.copy(distFolder, join(output, '_dist'));
+  await myWriteFile(join(output, '_dist', 'main.css'), (await readFile(join(distFolder, 'main.css'))).toString());
+  await myWriteFile(join(output, '_dist', 'main.js'), (await readFile(join(distFolder, 'main.js'))).toString());
   await myWriteFile(join(output, '.nojekyll'), '');
   bench.end();
   bench = start('Parsing lsif dump');
@@ -239,14 +235,6 @@ export const main = async ({ input, output, dist, uriMap }: MainOptions) => {
   await Promise.all(generated.map(async ({ destPath, html, src }) => {
     await myWriteFile(destPath + ".html", html);
     await myWriteFile(destPath + ".src.html", src);
-    if (isEnabled('check')) {
-      const report = htmlValidate.validateFile(destPath + ".html");
-      console.log("valid", report.valid);
-      if (!report.valid) {
-        console.log(report.results);
-        process.exit(0);
-      }
-    }
   }));
   bench.end();
 };

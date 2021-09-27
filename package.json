@@ -1,13 +1,25 @@
 {
   "name": "sourcetree-cli",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "View your sourcecode in browser like an ide",
   "main": "index.js",
   "bin": {
     "sourcetree": "./typescript-output/cli.js"
   },
+  "pkg": {
+    "scripts": "typescript-output/cli.js",
+    "assets": [
+      "templates/*.ejs",
+      "dist/*"
+    ],
+    "targets": [
+      "node16-linux-x64"
+    ],
+    "outputPath": "typescript-output"
+  },
   "scripts": {
     "build": "npx tsc",
+    "build-binary": "npx pkg --compress GZip .",
     "dogfood": "npx lsif-tsc -p . -o dump.lsif && node typescript-output/cli.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -21,9 +33,7 @@
   "dependencies": {
     "commander": "^8.1.0",
     "ejs": "^3.1.6",
-    "fs-extra": "^10.0.0",
     "highlight.js": "^11.2.0",
-    "html-validate": "^5.5.0",
     "lsif-protocol": "^0.4.3",
     "markdown-it": "^12.2.0"
   },
@@ -32,6 +42,7 @@
     "@types/ejs": "^3.1.0",
     "@types/fs-extra": "^9.0.12",
     "@types/markdown-it": "^12.2.1",
+    "pkg": "^5.3.2",
     "typescript": "^4.4.2"
   }
 }
