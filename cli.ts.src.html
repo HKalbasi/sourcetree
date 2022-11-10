@@ -1,0 +1,34 @@
+<span class="hljs-meta">#!/usr/bin/env node</span>
+<span class="hljs-keyword">import</span> { <span id="lsif9710">program</span> } <span class="hljs-keyword">from</span> <span class="hljs-string"><span id="lsif9714">&quot;commander&quot;</span></span>;
+<span class="hljs-keyword">import</span> { <span id="lsif9720">start</span> } <span class="hljs-keyword">from</span> <span class="hljs-string"><span id="lsif9724">&quot;./debug/bench&quot;</span></span>;
+<span class="hljs-keyword">import</span> { <span id="lsif9730">enableFlag</span> } <span class="hljs-keyword">from</span> <span class="hljs-string"><span id="lsif9734">&quot;./debug/flags&quot;</span></span>;
+<span class="hljs-keyword">import</span> { <span id="lsif9740">main</span> } <span class="hljs-keyword">from</span> <span class="hljs-string"><span id="lsif9744">&quot;./index&quot;</span></span>;
+
+<span id="lsif9746">program</span>
+  .<span class="hljs-title function_"><span id="lsif9762">option</span></span>(<span class="hljs-string">&#x27;-i, --input &lt;file&gt;&#x27;</span>, <span class="hljs-string">&#x27;lsif dump path&#x27;</span>, <span class="hljs-string">&#x27;dump.lsif&#x27;</span>)
+  .<span class="hljs-title function_"><span id="lsif9764">option</span></span>(<span class="hljs-string">&#x27;-o, --output &lt;file&gt;&#x27;</span>, <span class="hljs-string">&#x27;output folder for generated files&#x27;</span>, <span class="hljs-string">&#x27;out&#x27;</span>)
+  .<span class="hljs-title function_"><span id="lsif9766">option</span></span>(<span class="hljs-string">&#x27;--dist &lt;path&gt;&#x27;</span>, <span class="hljs-string">&#x27;customized absolute path to assets&#x27;</span>)
+  .<span class="hljs-title function_"><span id="lsif9768">option</span></span>(<span class="hljs-string">&#x27;--uri-map &lt;path&gt;&#x27;</span>, <span class="hljs-string">&#x27;customized locations for file tree&#x27;</span>)
+  .<span class="hljs-title function_"><span id="lsif9770">option</span></span>(<span class="hljs-string">&#x27;--bench&#x27;</span>, <span class="hljs-string">&#x27;enable benchmarking logs&#x27;</span>)
+  .<span class="hljs-title function_"><span id="lsif9772">option</span></span>(<span class="hljs-string">&#x27;--check&#x27;</span>, <span class="hljs-string">&#x27;enable integrity checking&#x27;</span>);
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">type</span> <span class="hljs-title class_"><span id="lsif9780">CliOptions</span></span> = <span id="lsif9850">{
+  <span class="hljs-attr"><span id="lsif9790">input</span></span>: <span class="hljs-built_in">string</span>;
+  <span class="hljs-attr"><span id="lsif9800">output</span></span>: <span class="hljs-built_in">string</span>;
+  <span id="lsif9810">dist</span>?: <span class="hljs-built_in">string</span>;
+  <span id="lsif9820">uriMap</span>?: <span class="hljs-built_in">string</span>;
+  <span class="hljs-attr"><span id="lsif9830">bench</span></span>: <span class="hljs-built_in">boolean</span>;
+  <span class="hljs-attr"><span id="lsif9840">check</span></span>: <span class="hljs-built_in">boolean</span>;
+}</span>;
+
+<span class="hljs-keyword">const</span> <span id="lsif9855">cli</span> = <span class="hljs-keyword">async</span> () <span id="lsif9862">=&gt;</span> {
+  <span class="hljs-keyword">const</span> <span id="lsif9867">bench</span> = <span class="hljs-title function_"><span id="lsif9871">start</span></span>(<span class="hljs-string">&quot;Building sourcetree of your code&quot;</span>, <span class="hljs-literal">true</span>);
+  <span id="lsif9873">program</span>.<span class="hljs-title function_"><span id="lsif9885">parse</span></span>(<span id="lsif9898">process</span>.<span class="hljs-property"><span id="lsif9910">argv</span></span>);
+  <span class="hljs-keyword">const</span> <span class="hljs-attr"><span id="lsif9915">options</span></span>: <span class="hljs-title class_"><span id="lsif9919">CliOptions</span></span> = <span id="lsif9921">program</span>.<span class="hljs-title function_"><span id="lsif9933">opts</span></span>();
+  <span class="hljs-keyword">if</span> (<span id="lsif9935">options</span>.<span class="hljs-property"><span id="lsif9937">bench</span></span>) <span class="hljs-title function_"><span id="lsif9939">enableFlag</span></span>(<span class="hljs-string">&#x27;bench&#x27;</span>);
+  <span class="hljs-keyword">if</span> (<span id="lsif9941">options</span>.<span class="hljs-property"><span id="lsif9943">check</span></span>) <span class="hljs-title function_"><span id="lsif9945">enableFlag</span></span>(<span class="hljs-string">&#x27;check&#x27;</span>);
+  <span class="hljs-keyword">await</span> <span class="hljs-title function_"><span id="lsif9947">main</span></span>(<span id="lsif9949">options</span>);
+  <span id="lsif9951">bench</span>.<span class="hljs-title function_"><span id="lsif9953">end</span></span>();
+};
+
+<span class="hljs-title function_"><span id="lsif9955">cli</span></span>();

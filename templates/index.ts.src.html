@@ -1,0 +1,15 @@
+<span class="hljs-keyword">import</span> <span id="lsif5287">ejs</span> <span class="hljs-keyword">from</span> <span class="hljs-string"><span id="lsif5291">&quot;ejs&quot;</span></span>;
+<span class="hljs-keyword">import</span> { <span id="lsif5297">templateFolder</span> } <span class="hljs-keyword">from</span> <span class="hljs-string"><span id="lsif5301">&quot;../paths&quot;</span></span>;
+<span class="hljs-keyword">import</span> { <span id="lsif5307">readFile</span> } <span class="hljs-keyword">from</span> <span class="hljs-string"><span id="lsif5311">&quot;fs/promises&quot;</span></span>;
+<span class="hljs-keyword">import</span> { <span id="lsif5317">join</span> } <span class="hljs-keyword">from</span> <span class="hljs-string"><span id="lsif5321">&quot;path&quot;</span></span>;
+
+<span class="hljs-keyword">const</span> <span id="lsif5326">c</span> = <span class="hljs-keyword">async</span> (<span class="hljs-attr"><span id="lsif5333">name</span></span>: <span class="hljs-built_in">string</span>) <span id="lsif5340">=&gt;</span> {
+  <span class="hljs-keyword">return</span> <span id="lsif5342">ejs</span>.<span class="hljs-title function_"><span id="lsif5362">compile</span></span>((<span class="hljs-keyword">await</span> <span class="hljs-title function_"><span id="lsif5364">readFile</span></span>(<span class="hljs-title function_"><span id="lsif5366">join</span></span>(<span id="lsif5368">templateFolder</span>, <span id="lsif5370">name</span>))).<span class="hljs-title function_"><span id="lsif5372">toString</span></span>());
+};
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span id="lsif5380">templatesBuilder</span> = <span class="hljs-keyword">async</span> () <span id="lsif5387">=&gt;</span> {
+  <span class="hljs-keyword">return</span> <span id="lsif5410">{
+    <span class="hljs-attr"><span id="lsif5392">source</span></span>: <span class="hljs-keyword">await</span> <span class="hljs-title function_"><span id="lsif5396">c</span></span>(<span class="hljs-string">&#x27;source.ejs&#x27;</span>),
+    <span class="hljs-attr"><span id="lsif5401">welcome</span></span>: <span class="hljs-keyword">await</span> <span class="hljs-title function_"><span id="lsif5405">c</span></span>(<span class="hljs-string">&#x27;welcome.ejs&#x27;</span>),
+  }</span>;
+};

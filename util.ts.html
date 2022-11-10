@@ -1,0 +1,170 @@
+<html>
+  <head>
+    <base href="./">
+    <title>util.ts - Sourcetree</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/vs2015.min.css" integrity="sha384-BE+nmfgoK1j3fBxbLI64Jzf52Mx/QAyw+4O7GyPYevJnAyrljCoRtQkYNfCfuWPF" crossorigin="anonymous">
+    <link rel="stylesheet" href="_dist/main.css?v=1668113779531">
+  </head>
+  <body style="display: flex; flex-direction: row; margin: 0;">
+    <div id="side-panel">
+      <div id="side-panel-tabs">
+        <div id="tab-panel-files" class="side-panel-tabs-button enabled">files</div>
+        <div id="tab-panel-search" class="side-panel-tabs-button">search</div>
+      </div>
+      <div class="side-panel-tab" id="panel-files"><ul><li>debug<ul><li><a href="./debug/flags.ts.html">flags.ts</a></li><li><a href="./debug/bench.ts.html">bench.ts</a></li></ul></li><li>node_modules<ul><li>typescript-lsif<ul><li>lib<ul><li><a href="./node_modules/typescript-lsif/lib/lib.es2015.collection.d.ts.html">lib.es2015.collection.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es2015.iterable.d.ts.html">lib.es2015.iterable.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es2015.symbol.wellknown.d.ts.html">lib.es2015.symbol.wellknown.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.dom.d.ts.html">lib.dom.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es5.d.ts.html">lib.es5.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es2015.promise.d.ts.html">lib.es2015.promise.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es2018.promise.d.ts.html">lib.es2018.promise.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es2015.core.d.ts.html">lib.es2015.core.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es2016.array.include.d.ts.html">lib.es2016.array.include.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es2019.array.d.ts.html">lib.es2019.array.d.ts</a></li></ul></li></ul></li><li>@types<ul><li>node<ul><li><a href="./node_modules/@types/node/globals.d.ts.html">globals.d.ts</a></li><li><a href="./node_modules/@types/node/console.d.ts.html">console.d.ts</a></li><li><a href="./node_modules/@types/node/path.d.ts.html">path.d.ts</a></li><li>fs<ul><li><a href="./node_modules/@types/node/fs/promises.d.ts.html">promises.d.ts</a></li></ul></li><li><a href="./node_modules/@types/node/buffer.d.ts.html">buffer.d.ts</a></li><li><a href="./node_modules/@types/node/process.d.ts.html">process.d.ts</a></li></ul></li><li>ejs<ul><li><a href="./node_modules/@types/ejs/index.d.ts.html">index.d.ts</a></li></ul></li><li>markdown-it<ul><li>lib<ul><li><a href="./node_modules/@types/markdown-it/lib/index.d.ts.html">index.d.ts</a></li></ul></li><li><a href="./node_modules/@types/markdown-it/index.d.ts.html">index.d.ts</a></li></ul></li></ul></li><li>lsif-protocol<ul><li>lib<ul><li><a href="./node_modules/lsif-protocol/lib/protocol.d.ts.html">protocol.d.ts</a></li><li><a href="./node_modules/lsif-protocol/lib/main.d.ts.html">main.d.ts</a></li></ul></li></ul></li><li>highlight.js<ul><li>types<ul><li><a href="./node_modules/highlight.js/types/index.d.ts.html">index.d.ts</a></li></ul></li></ul></li><li>vscode-languageserver-types<ul><li>lib<ul><li>umd<ul><li><a href="./node_modules/vscode-languageserver-types/lib/umd/main.d.ts.html">main.d.ts</a></li></ul></li></ul></li></ul></li><li>vscode-languageserver-protocol<ul><li>lib<ul><li>common<ul><li><a href="./node_modules/vscode-languageserver-protocol/lib/common/api.d.ts.html">api.d.ts</a></li></ul></li></ul></li></ul></li><li>commander<ul><li>typings<ul><li><a href="./node_modules/commander/typings/index.d.ts.html">index.d.ts</a></li></ul></li></ul></li></ul></li><li class="current-file"><a href="./util.ts.html">util.ts</a></li><li><a href="./paths.ts.html">paths.ts</a></li><li><a href="./lsif.ts.html">lsif.ts</a></li><li><a href="./tree.ts.html">tree.ts</a></li><li>templates<ul><li><a href="./templates/index.ts.html">index.ts</a></li></ul></li><li><a href="./index.ts.html">index.ts</a></li><li><a href="./cli.ts.html">cli.ts</a></li></ul></div>
+      <div class="side-panel-tab" id="panel-search" hidden>
+        <input type="text" id="search-input" disabled>
+        <div id="search-result">Not implemented yet</div>
+      </div>
+    </div>
+    <div id = "main-panel">
+    <pre id="line-numbers"><span id="1">   1| </span>
+<span id="2">   2| </span>
+<span id="3">   3| </span>
+<span id="4">   4| </span>
+<span id="5">   5| </span>
+<span id="6">   6| </span>
+<span id="7">   7| </span>
+<span id="8">   8| </span>
+<span id="9">   9| </span>
+<span id="10">  10| </span>
+<span id="11">  11| </span>
+<span id="12">  12| </span>
+<span id="13">  13| </span>
+<span id="14">  14| </span>
+<span id="15">  15| </span>
+<span id="16">  16| </span>
+<span id="17">  17| </span>
+<span id="18">  18| </span>
+<span id="19">  19| </span>
+<span id="20">  20| </span>
+<span id="21">  21| </span>
+<span id="22">  22| </span>
+<span id="23">  23| </span>
+<span id="24">  24| </span>
+<span id="25">  25| </span>
+<span id="26">  26| </span>
+<span id="27">  27| </span>
+<span id="28">  28| </span>
+<span id="29">  29| </span>
+<span id="30">  30| </span>
+<span id="31">  31| </span>
+<span id="32">  32| </span>
+<span id="33">  33| </span>
+<span id="34">  34| </span>
+<span id="35">  35| </span>
+<span id="36">  36| </span>
+<span id="37">  37| </span>
+<span id="38">  38| </span>
+<span id="39">  39| </span>
+<span id="40">  40| </span>
+<span id="41">  41| </span>
+<span id="42">  42| </span>
+<span id="43">  43| </span>
+<span id="44">  44| </span>
+<span id="45">  45| </span>
+<span id="46">  46| </span>
+<span id="47">  47| </span>
+<span id="48">  48| </span>
+<span id="49">  49| </span>
+<span id="50">  50| </span>
+<span id="51">  51| </span>
+<span id="52">  52| </span>
+<span id="53">  53| </span>
+<span id="54">  54| </span>
+<span id="55">  55| </span>
+<span id="56">  56| </span>
+<span id="57">  57| </span>
+<span id="58">  58| </span>
+<span id="59">  59| </span>
+<span id="60">  60| </span>
+<span id="61">  61| </span>
+<span id="62">  62| </span>
+<span id="63">  63| </span>
+<span id="64">  64| </span>
+<span id="65">  65| </span>
+<span id="66">  66| </span>
+<span id="67">  67| </span>
+<span id="68">  68| </span>
+<span id="69">  69| </span>
+<span id="70">  70| </span>
+<span id="71">  71| </span>
+
+    </pre>
+    <pre id="code"><code class="language-js"><span class="hljs-keyword">import</span> { <span id="lsif524">dirname</span> } <span class="hljs-keyword">from</span> <span class="hljs-string"><span id="lsif538">&quot;path&quot;</span></span>;
+<span class="hljs-keyword">import</span> { <span id="lsif560">mkdir</span>, <span id="lsif578">writeFile</span> } <span class="hljs-keyword">from</span> <span class="hljs-string"><span id="lsif592">&quot;fs/promises&quot;</span></span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span id="lsif600">myWriteFile</span> = <span class="hljs-keyword">async</span> (<span class="hljs-attr"><span id="lsif607">path</span></span>: <span class="hljs-built_in">string</span>, <span class="hljs-attr"><span id="lsif614">content</span></span>: <span class="hljs-built_in">string</span>) <span id="lsif621">=&gt;</span> {
+  <span class="hljs-keyword">const</span> <span id="lsif626">folder</span> = <span class="hljs-title function_"><span id="lsif630">dirname</span></span>(<span id="lsif632">path</span>);
+  <span class="hljs-keyword">await</span> <span class="hljs-title function_"><span id="lsif634">mkdir</span></span>(<span id="lsif636">folder</span>, <span id="lsif648">{ <span class="hljs-attr"><span id="lsif641">recursive</span></span>: <span class="hljs-literal">true</span> }</span>);
+  <span class="hljs-keyword">await</span> <span class="hljs-title function_"><span id="lsif650">writeFile</span></span>(<span id="lsif652">path</span>, <span id="lsif654">content</span>);
+};
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">type</span> <span class="hljs-title class_"><span id="lsif662">Addition</span></span> = <span id="lsif711">{
+  <span class="hljs-attr"><span id="lsif672">position</span></span>: <span id="lsif693">{
+    <span class="hljs-attr"><span id="lsif679">line</span></span>: <span class="hljs-built_in">number</span>;
+    <span class="hljs-attr"><span id="lsif686">character</span></span>: <span class="hljs-built_in">number</span>;
+  }</span>;
+  <span class="hljs-attr"><span id="lsif701">text</span></span>: <span class="hljs-built_in">string</span>;
+}</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span class="hljs-title function_"><span id="lsif719">putInSrc</span></span> = (<span class="hljs-params"><span id="lsif726">highlight</span>: <span class="hljs-built_in">string</span>, <span id="lsif733">additions</span>: <span id="lsif737">Addition</span>[]</span>) <span id="lsif742">=&gt;</span> {
+  <span class="hljs-keyword">const</span> <span class="hljs-title function_"><span id="lsif747">key</span></span> = (<span class="hljs-params"><span id="lsif754">i</span>: <span class="hljs-built_in">number</span>, <span id="lsif761">j</span>: <span class="hljs-built_in">number</span></span>) <span id="lsif768">=&gt;</span> <span class="hljs-string">`<span class="hljs-subst">${<span id="lsif770">i</span>}</span>,<span class="hljs-subst">${<span id="lsif772">j</span>}</span>`</span>;
+  <span class="hljs-keyword">const</span> <span id="lsif777">additionMap</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_"><span id="lsif781">Map</span></span>();
+  <span class="hljs-keyword">const</span> <span class="hljs-title function_"><span id="lsif786">addsInPlace</span></span> = (<span class="hljs-params"><span id="lsif793">i</span>: <span class="hljs-built_in">number</span>, <span id="lsif800">j</span>: <span class="hljs-built_in">number</span></span>) <span id="lsif807">=&gt;</span> {
+    <span class="hljs-keyword">const</span> <span id="lsif812">a</span> = <span id="lsif816">additionMap</span>.<span class="hljs-title function_"><span id="lsif818">get</span></span>(<span class="hljs-title function_"><span id="lsif820">key</span></span>(<span id="lsif822">i</span>, <span id="lsif824">j</span>));
+    <span class="hljs-keyword">if</span> (<span id="lsif826">a</span>) {
+      <span class="hljs-keyword">return</span> <span id="lsif828">a</span>.<span class="hljs-title function_">join</span>(<span class="hljs-string">&#x27;&#x27;</span>);
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;&#x27;</span>;
+  };
+  <span id="lsif830">additions</span>.<span class="hljs-title function_"><span id="lsif842">forEach</span></span>(<span class="hljs-function">(<span class="hljs-params"><span id="lsif847">add</span></span>) <span id="lsif854">=&gt;</span></span> {
+    <span class="hljs-keyword">const</span> <span id="lsif859">p</span> = <span id="lsif863">add</span>.<span class="hljs-property"><span id="lsif865">position</span></span>;
+    <span class="hljs-keyword">const</span> <span id="lsif870">k</span> = <span class="hljs-title function_"><span id="lsif874">key</span></span>(<span id="lsif876">p</span>.<span class="hljs-property"><span id="lsif878">line</span></span>, <span id="lsif880">p</span>.<span class="hljs-property"><span id="lsif882">character</span></span>);
+    <span class="hljs-keyword">let</span> <span id="lsif887">cur</span> = <span id="lsif891">additionMap</span>.<span class="hljs-title function_"><span id="lsif893">get</span></span>(<span id="lsif895">k</span>) ?? [];
+    <span id="lsif897">additionMap</span>.<span class="hljs-title function_"><span id="lsif899">set</span></span>(<span id="lsif901">k</span>, <span id="lsif903">cur</span>);
+    <span id="lsif905">cur</span>.<span class="hljs-title function_">push</span>(<span id="lsif907">add</span>.<span class="hljs-property"><span id="lsif909">text</span></span>);
+  });
+  <span class="hljs-keyword">let</span> <span id="lsif914">result</span> = <span class="hljs-string">&quot;&quot;</span>;
+  <span class="hljs-keyword">let</span> <span id="lsif921">i</span> = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">let</span> <span id="lsif928">j</span> = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">let</span> <span id="lsif935">hline</span> = <span id="lsif939">highlight</span>;
+  <span class="hljs-keyword">let</span> <span id="lsif944">p</span> = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">while</span> (<span id="lsif948">p</span> &lt; <span id="lsif950">hline</span>.<span class="hljs-property"><span id="lsif962">length</span></span>) {
+    <span class="hljs-keyword">while</span> (<span id="lsif964">hline</span>[<span id="lsif966">p</span>] == <span class="hljs-string">&#x27;&lt;&#x27;</span>) {
+      <span class="hljs-keyword">while</span> (<span id="lsif968">hline</span>[<span id="lsif970">p</span>] != <span class="hljs-string">&#x27;&gt;&#x27;</span>) {
+        <span id="lsif972">result</span> += <span id="lsif974">hline</span>[<span id="lsif976">p</span>];
+        <span id="lsif978">p</span> += <span class="hljs-number">1</span>;
+      }
+      <span id="lsif980">result</span> += <span id="lsif982">hline</span>[<span id="lsif984">p</span>];
+      <span id="lsif986">p</span> += <span class="hljs-number">1</span>;
+    }
+    <span id="lsif988">result</span> += <span class="hljs-title function_"><span id="lsif990">addsInPlace</span></span>(<span id="lsif992">i</span>, <span id="lsif994">j</span>);
+    <span id="lsif996">j</span> += <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">if</span> (<span id="lsif998">p</span> &gt;= <span id="lsif1000">hline</span>.<span class="hljs-property"><span id="lsif1002">length</span></span>) <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">if</span> (<span id="lsif1004">hline</span>[<span id="lsif1006">p</span>] == <span class="hljs-string">&#x27;\n&#x27;</span>) {
+      <span id="lsif1008">result</span> += <span id="lsif1010">hline</span>[<span id="lsif1012">p</span>];
+      <span id="lsif1014">p</span> += <span class="hljs-number">1</span>;
+      <span id="lsif1016">j</span> = <span class="hljs-number">0</span>;
+      <span id="lsif1018">i</span> += <span class="hljs-number">1</span>;
+      <span class="hljs-keyword">continue</span>;  
+    }
+    <span class="hljs-keyword">if</span> (<span id="lsif1020">hline</span>[<span id="lsif1022">p</span>] == <span class="hljs-string">&#x27;&amp;&#x27;</span>) {
+      <span class="hljs-keyword">while</span> (<span id="lsif1024">hline</span>[<span id="lsif1026">p</span>] != <span class="hljs-string">&#x27;;&#x27;</span>) {
+        <span id="lsif1028">result</span> += <span id="lsif1030">hline</span>[<span id="lsif1032">p</span>];
+        <span id="lsif1034">p</span> += <span class="hljs-number">1</span>;
+      }
+    }
+    <span id="lsif1036">result</span> += <span id="lsif1038">hline</span>[<span id="lsif1040">p</span>];
+    <span id="lsif1042">p</span> += <span class="hljs-number">1</span>;
+  }
+  <span id="lsif1044">result</span> += <span class="hljs-title function_"><span id="lsif1046">addsInPlace</span></span>(<span id="lsif1048">i</span>, <span id="lsif1050">j</span>);
+  <span class="hljs-keyword">return</span> <span id="lsif1052">result</span>;
+};
+</code></pre>
+    </div>
+    <script src="https://unpkg.com/@popperjs/core@2.10.1" integrity="sha384-W8fXfP3gkOKtndU4JGtKDvXbO53Wy8SZCQHczT5FMiiqmQfUpWbYdTil/SxwZgAN" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/tippy.js@6.3.1" integrity="sha384-vJRz16GTXNh0rYTtwJHOvYKAak1mFPGhLKTioEv5FQz+vxPy/UK77RAjCyUIHFGB" crossorigin="anonymous"></script>
+    <script src="_dist/main.js?v=1668113779532"></script>
+  </body>
+</html>

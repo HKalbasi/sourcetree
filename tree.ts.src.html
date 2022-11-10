@@ -1,0 +1,38 @@
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">type</span> <span class="hljs-title class_"><span id="lsif4744">TreeNode</span></span> = <span id="lsif4764">{ <span class="hljs-attr"><span id="lsif4754">name</span></span>: <span class="hljs-built_in">string</span> }</span> &amp; (<span id="lsif4794">{
+  <span class="hljs-attr"><span id="lsif4772">kind</span></span>: <span class="hljs-string">&#x27;folder&#x27;</span>,
+  <span class="hljs-attr"><span id="lsif4782">children</span></span>: <span class="hljs-title class_"><span id="lsif4786">TreeNode</span></span>[],
+}</span> | <span id="lsif4812">{
+  <span class="hljs-attr"><span id="lsif4802">kind</span></span>: <span class="hljs-string">&#x27;file&#x27;</span>,
+}</span>);
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span class="hljs-title function_"><span id="lsif4820">buildTree</span></span> = (<span class="hljs-params"><span id="lsif4827">list</span>: <span class="hljs-built_in">string</span>[]</span>) <span id="lsif4834">=&gt;</span> {
+  <span class="hljs-keyword">const</span> <span class="hljs-attr"><span id="lsif4839">tree</span></span>: <span class="hljs-title class_"><span id="lsif4843">TreeNode</span></span>[] = [];
+  <span class="hljs-keyword">const</span> <span class="hljs-title function_"><span id="lsif4848">getFolder</span></span> = (<span class="hljs-params"><span id="lsif4855">path</span>: <span class="hljs-built_in">string</span>[], <span id="lsif4862">t</span> = <span id="lsif4866">tree</span></span>) <span id="lsif4871">=&gt;</span> {
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> <span id="lsif4876">p</span> <span class="hljs-keyword">of</span> <span id="lsif4880">path</span>) {
+      <span class="hljs-keyword">let</span> <span id="lsif4885">f</span> = <span id="lsif4889">t</span>.<span class="hljs-title function_"><span id="lsif4903">find</span></span>(<span class="hljs-function">(<span class="hljs-params"><span id="lsif4908">x</span></span>) <span id="lsif4915">=&gt;</span></span> <span id="lsif4917">x</span>.<span class="hljs-property"><span id="lsif4919">name</span></span> === <span id="lsif4921">p</span>);
+      <span class="hljs-keyword">if</span> (!<span id="lsif4923">f</span>) {
+        <span id="lsif4925">f</span> = <span id="lsif4953">{
+          <span class="hljs-attr"><span id="lsif4930">name</span></span>: <span id="lsif4934">p</span>,
+          <span class="hljs-attr"><span id="lsif4939">kind</span></span>: <span class="hljs-string">&#x27;folder&#x27;</span>,
+          <span class="hljs-attr"><span id="lsif4946">children</span></span>: [],
+        }</span>;
+        <span id="lsif4955">t</span>.<span class="hljs-title function_"><span id="lsif4957">push</span></span>(<span id="lsif4959">f</span>);
+      }
+      <span class="hljs-keyword">if</span> (<span id="lsif4961">f</span>.<span class="hljs-property"><span id="lsif4971">kind</span></span> === <span class="hljs-string">&#x27;file&#x27;</span>) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_"><span id="lsif4973">Error</span></span>(<span class="hljs-string">&quot;Folder and file with same name&quot;</span>);
+      }
+      <span id="lsif4975">t</span> = <span id="lsif4977">f</span>.<span class="hljs-property"><span id="lsif4979">children</span></span>;
+    }
+    <span class="hljs-keyword">return</span> <span id="lsif4981">t</span>;
+  }
+  <span id="lsif4983">list</span>
+    .<span class="hljs-title function_"><span id="lsif4985">forEach</span></span>(<span class="hljs-function">(<span class="hljs-params"><span id="lsif4990">x</span></span>) <span id="lsif4997">=&gt;</span></span> {
+      <span class="hljs-keyword">let</span> <span id="lsif5002">sx</span> = <span id="lsif5006">x</span>.<span class="hljs-title function_"><span id="lsif5008">split</span></span>(<span class="hljs-string">&#x27;/&#x27;</span>);
+      <span class="hljs-keyword">const</span> <span id="lsif5013">folder</span> = <span class="hljs-title function_"><span id="lsif5017">getFolder</span></span>(<span id="lsif5019">sx</span>.<span class="hljs-title function_"><span id="lsif5031">slice</span></span>(<span class="hljs-number">0</span>, -<span class="hljs-number">1</span>));
+      <span id="lsif5033">folder</span>.<span class="hljs-title function_"><span id="lsif5035">push</span></span>(<span id="lsif5060">{
+        <span class="hljs-attr"><span id="lsif5040">kind</span></span>: <span class="hljs-string">&#x27;file&#x27;</span>,
+        <span class="hljs-attr"><span id="lsif5047">name</span></span>: <span id="lsif5051">sx</span>[<span id="lsif5053">sx</span>.<span class="hljs-property"><span id="lsif5055">length</span></span> - <span class="hljs-number">1</span>],
+      }</span>);
+    });
+  <span class="hljs-keyword">return</span> <span id="lsif5062">tree</span>;
+};

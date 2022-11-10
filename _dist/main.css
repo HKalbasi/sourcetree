@@ -1,0 +1,88 @@
+#code {
+  flex-grow: 1;
+}
+.selected {
+  color: yellow;
+  background-color: blue;
+}
+ul {
+  padding-left: 1rem;
+}
+.current-file {
+  background-color: yellowgreen;
+}
+#side-panel {
+  background-color: wheat;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+#main-panel, .search-result-code {
+  background-color: #1e1e1e;
+  color: white;
+}
+.search-result-code {
+  display: inline-block;
+  padding: 0 .5rem;
+}
+#main-panel {  
+  max-height: 100vh;
+  overflow-y: auto;
+  flex-grow: 1;
+  display: flex;
+}
+
+#side-panel-tabs {
+  display: flex;
+  flex-direction: row;
+}
+.side-panel-tabs-button {
+  flex-grow: 1;
+  padding: 1rem;
+  background-color: black;
+  color: white;
+  border: 5px solid black;
+  text-align: center;
+}
+.side-panel-tabs-button.enabled {
+  background-color: green;
+}
+.side-panel-tab {
+  margin: 1rem;
+}
+
+#panel-files {
+  overflow-y: auto;
+}
+
+#panel-search {
+  overflow-x: auto;
+  width: 25vw;
+}
+
+.hover-root {
+  max-height: 40vh;
+  overflow-y: auto;
+}
+
+.hover-root pre, .hover-root p, .hover-root h1 {
+  margin: 0.25em 0;
+}
+
+.hover-root a {
+  color: aqua;
+}
+
+a.button {
+  background-color: red;
+  color: white;
+  border-radius: 1rem;
+  padding: .5rem;
+  margin: .5rem;
+  text-decoration: none;
+}
+
+.button-holder {
+  padding: .5rem;
+}

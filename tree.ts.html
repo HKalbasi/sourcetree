@@ -1,0 +1,106 @@
+<html>
+  <head>
+    <base href="./">
+    <title>tree.ts - Sourcetree</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/vs2015.min.css" integrity="sha384-BE+nmfgoK1j3fBxbLI64Jzf52Mx/QAyw+4O7GyPYevJnAyrljCoRtQkYNfCfuWPF" crossorigin="anonymous">
+    <link rel="stylesheet" href="_dist/main.css?v=1668113779551">
+  </head>
+  <body style="display: flex; flex-direction: row; margin: 0;">
+    <div id="side-panel">
+      <div id="side-panel-tabs">
+        <div id="tab-panel-files" class="side-panel-tabs-button enabled">files</div>
+        <div id="tab-panel-search" class="side-panel-tabs-button">search</div>
+      </div>
+      <div class="side-panel-tab" id="panel-files"><ul><li>debug<ul><li><a href="./debug/flags.ts.html">flags.ts</a></li><li><a href="./debug/bench.ts.html">bench.ts</a></li></ul></li><li>node_modules<ul><li>typescript-lsif<ul><li>lib<ul><li><a href="./node_modules/typescript-lsif/lib/lib.es2015.collection.d.ts.html">lib.es2015.collection.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es2015.iterable.d.ts.html">lib.es2015.iterable.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es2015.symbol.wellknown.d.ts.html">lib.es2015.symbol.wellknown.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.dom.d.ts.html">lib.dom.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es5.d.ts.html">lib.es5.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es2015.promise.d.ts.html">lib.es2015.promise.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es2018.promise.d.ts.html">lib.es2018.promise.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es2015.core.d.ts.html">lib.es2015.core.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es2016.array.include.d.ts.html">lib.es2016.array.include.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es2019.array.d.ts.html">lib.es2019.array.d.ts</a></li></ul></li></ul></li><li>@types<ul><li>node<ul><li><a href="./node_modules/@types/node/globals.d.ts.html">globals.d.ts</a></li><li><a href="./node_modules/@types/node/console.d.ts.html">console.d.ts</a></li><li><a href="./node_modules/@types/node/path.d.ts.html">path.d.ts</a></li><li>fs<ul><li><a href="./node_modules/@types/node/fs/promises.d.ts.html">promises.d.ts</a></li></ul></li><li><a href="./node_modules/@types/node/buffer.d.ts.html">buffer.d.ts</a></li><li><a href="./node_modules/@types/node/process.d.ts.html">process.d.ts</a></li></ul></li><li>ejs<ul><li><a href="./node_modules/@types/ejs/index.d.ts.html">index.d.ts</a></li></ul></li><li>markdown-it<ul><li>lib<ul><li><a href="./node_modules/@types/markdown-it/lib/index.d.ts.html">index.d.ts</a></li></ul></li><li><a href="./node_modules/@types/markdown-it/index.d.ts.html">index.d.ts</a></li></ul></li></ul></li><li>lsif-protocol<ul><li>lib<ul><li><a href="./node_modules/lsif-protocol/lib/protocol.d.ts.html">protocol.d.ts</a></li><li><a href="./node_modules/lsif-protocol/lib/main.d.ts.html">main.d.ts</a></li></ul></li></ul></li><li>highlight.js<ul><li>types<ul><li><a href="./node_modules/highlight.js/types/index.d.ts.html">index.d.ts</a></li></ul></li></ul></li><li>vscode-languageserver-types<ul><li>lib<ul><li>umd<ul><li><a href="./node_modules/vscode-languageserver-types/lib/umd/main.d.ts.html">main.d.ts</a></li></ul></li></ul></li></ul></li><li>vscode-languageserver-protocol<ul><li>lib<ul><li>common<ul><li><a href="./node_modules/vscode-languageserver-protocol/lib/common/api.d.ts.html">api.d.ts</a></li></ul></li></ul></li></ul></li><li>commander<ul><li>typings<ul><li><a href="./node_modules/commander/typings/index.d.ts.html">index.d.ts</a></li></ul></li></ul></li></ul></li><li><a href="./util.ts.html">util.ts</a></li><li><a href="./paths.ts.html">paths.ts</a></li><li><a href="./lsif.ts.html">lsif.ts</a></li><li class="current-file"><a href="./tree.ts.html">tree.ts</a></li><li>templates<ul><li><a href="./templates/index.ts.html">index.ts</a></li></ul></li><li><a href="./index.ts.html">index.ts</a></li><li><a href="./cli.ts.html">cli.ts</a></li></ul></div>
+      <div class="side-panel-tab" id="panel-search" hidden>
+        <input type="text" id="search-input" disabled>
+        <div id="search-result">Not implemented yet</div>
+      </div>
+    </div>
+    <div id = "main-panel">
+    <pre id="line-numbers"><span id="1">   1| </span>
+<span id="2">   2| </span>
+<span id="3">   3| </span>
+<span id="4">   4| </span>
+<span id="5">   5| </span>
+<span id="6">   6| </span>
+<span id="7">   7| </span>
+<span id="8">   8| </span>
+<span id="9">   9| </span>
+<span id="10">  10| </span>
+<span id="11">  11| </span>
+<span id="12">  12| </span>
+<span id="13">  13| </span>
+<span id="14">  14| </span>
+<span id="15">  15| </span>
+<span id="16">  16| </span>
+<span id="17">  17| </span>
+<span id="18">  18| </span>
+<span id="19">  19| </span>
+<span id="20">  20| </span>
+<span id="21">  21| </span>
+<span id="22">  22| </span>
+<span id="23">  23| </span>
+<span id="24">  24| </span>
+<span id="25">  25| </span>
+<span id="26">  26| </span>
+<span id="27">  27| </span>
+<span id="28">  28| </span>
+<span id="29">  29| </span>
+<span id="30">  30| </span>
+<span id="31">  31| </span>
+<span id="32">  32| </span>
+<span id="33">  33| </span>
+<span id="34">  34| </span>
+<span id="35">  35| </span>
+<span id="36">  36| </span>
+<span id="37">  37| </span>
+<span id="38">  38| </span>
+<span id="39">  39| </span>
+
+    </pre>
+    <pre id="code"><code class="language-js"><span class="hljs-keyword">export</span> <span class="hljs-keyword">type</span> <span class="hljs-title class_"><span id="lsif4744">TreeNode</span></span> = <span id="lsif4764">{ <span class="hljs-attr"><span id="lsif4754">name</span></span>: <span class="hljs-built_in">string</span> }</span> &amp; (<span id="lsif4794">{
+  <span class="hljs-attr"><span id="lsif4772">kind</span></span>: <span class="hljs-string">&#x27;folder&#x27;</span>,
+  <span class="hljs-attr"><span id="lsif4782">children</span></span>: <span class="hljs-title class_"><span id="lsif4786">TreeNode</span></span>[],
+}</span> | <span id="lsif4812">{
+  <span class="hljs-attr"><span id="lsif4802">kind</span></span>: <span class="hljs-string">&#x27;file&#x27;</span>,
+}</span>);
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span class="hljs-title function_"><span id="lsif4820">buildTree</span></span> = (<span class="hljs-params"><span id="lsif4827">list</span>: <span class="hljs-built_in">string</span>[]</span>) <span id="lsif4834">=&gt;</span> {
+  <span class="hljs-keyword">const</span> <span class="hljs-attr"><span id="lsif4839">tree</span></span>: <span class="hljs-title class_"><span id="lsif4843">TreeNode</span></span>[] = [];
+  <span class="hljs-keyword">const</span> <span class="hljs-title function_"><span id="lsif4848">getFolder</span></span> = (<span class="hljs-params"><span id="lsif4855">path</span>: <span class="hljs-built_in">string</span>[], <span id="lsif4862">t</span> = <span id="lsif4866">tree</span></span>) <span id="lsif4871">=&gt;</span> {
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> <span id="lsif4876">p</span> <span class="hljs-keyword">of</span> <span id="lsif4880">path</span>) {
+      <span class="hljs-keyword">let</span> <span id="lsif4885">f</span> = <span id="lsif4889">t</span>.<span class="hljs-title function_"><span id="lsif4903">find</span></span>(<span class="hljs-function">(<span class="hljs-params"><span id="lsif4908">x</span></span>) <span id="lsif4915">=&gt;</span></span> <span id="lsif4917">x</span>.<span class="hljs-property"><span id="lsif4919">name</span></span> === <span id="lsif4921">p</span>);
+      <span class="hljs-keyword">if</span> (!<span id="lsif4923">f</span>) {
+        <span id="lsif4925">f</span> = <span id="lsif4953">{
+          <span class="hljs-attr"><span id="lsif4930">name</span></span>: <span id="lsif4934">p</span>,
+          <span class="hljs-attr"><span id="lsif4939">kind</span></span>: <span class="hljs-string">&#x27;folder&#x27;</span>,
+          <span class="hljs-attr"><span id="lsif4946">children</span></span>: [],
+        }</span>;
+        <span id="lsif4955">t</span>.<span class="hljs-title function_"><span id="lsif4957">push</span></span>(<span id="lsif4959">f</span>);
+      }
+      <span class="hljs-keyword">if</span> (<span id="lsif4961">f</span>.<span class="hljs-property"><span id="lsif4971">kind</span></span> === <span class="hljs-string">&#x27;file&#x27;</span>) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_"><span id="lsif4973">Error</span></span>(<span class="hljs-string">&quot;Folder and file with same name&quot;</span>);
+      }
+      <span id="lsif4975">t</span> = <span id="lsif4977">f</span>.<span class="hljs-property"><span id="lsif4979">children</span></span>;
+    }
+    <span class="hljs-keyword">return</span> <span id="lsif4981">t</span>;
+  }
+  <span id="lsif4983">list</span>
+    .<span class="hljs-title function_"><span id="lsif4985">forEach</span></span>(<span class="hljs-function">(<span class="hljs-params"><span id="lsif4990">x</span></span>) <span id="lsif4997">=&gt;</span></span> {
+      <span class="hljs-keyword">let</span> <span id="lsif5002">sx</span> = <span id="lsif5006">x</span>.<span class="hljs-title function_"><span id="lsif5008">split</span></span>(<span class="hljs-string">&#x27;/&#x27;</span>);
+      <span class="hljs-keyword">const</span> <span id="lsif5013">folder</span> = <span class="hljs-title function_"><span id="lsif5017">getFolder</span></span>(<span id="lsif5019">sx</span>.<span class="hljs-title function_"><span id="lsif5031">slice</span></span>(<span class="hljs-number">0</span>, -<span class="hljs-number">1</span>));
+      <span id="lsif5033">folder</span>.<span class="hljs-title function_"><span id="lsif5035">push</span></span>(<span id="lsif5060">{
+        <span class="hljs-attr"><span id="lsif5040">kind</span></span>: <span class="hljs-string">&#x27;file&#x27;</span>,
+        <span class="hljs-attr"><span id="lsif5047">name</span></span>: <span id="lsif5051">sx</span>[<span id="lsif5053">sx</span>.<span class="hljs-property"><span id="lsif5055">length</span></span> - <span class="hljs-number">1</span>],
+      }</span>);
+    });
+  <span class="hljs-keyword">return</span> <span id="lsif5062">tree</span>;
+};
+</code></pre>
+    </div>
+    <script src="https://unpkg.com/@popperjs/core@2.10.1" integrity="sha384-W8fXfP3gkOKtndU4JGtKDvXbO53Wy8SZCQHczT5FMiiqmQfUpWbYdTil/SxwZgAN" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/tippy.js@6.3.1" integrity="sha384-vJRz16GTXNh0rYTtwJHOvYKAak1mFPGhLKTioEv5FQz+vxPy/UK77RAjCyUIHFGB" crossorigin="anonymous"></script>
+    <script src="_dist/main.js?v=1668113779551"></script>
+  </body>
+</html>

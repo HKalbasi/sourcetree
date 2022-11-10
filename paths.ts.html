@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <base href="./">
+    <title>paths.ts - Sourcetree</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/vs2015.min.css" integrity="sha384-BE+nmfgoK1j3fBxbLI64Jzf52Mx/QAyw+4O7GyPYevJnAyrljCoRtQkYNfCfuWPF" crossorigin="anonymous">
+    <link rel="stylesheet" href="_dist/main.css?v=1668113779537">
+  </head>
+  <body style="display: flex; flex-direction: row; margin: 0;">
+    <div id="side-panel">
+      <div id="side-panel-tabs">
+        <div id="tab-panel-files" class="side-panel-tabs-button enabled">files</div>
+        <div id="tab-panel-search" class="side-panel-tabs-button">search</div>
+      </div>
+      <div class="side-panel-tab" id="panel-files"><ul><li>debug<ul><li><a href="./debug/flags.ts.html">flags.ts</a></li><li><a href="./debug/bench.ts.html">bench.ts</a></li></ul></li><li>node_modules<ul><li>typescript-lsif<ul><li>lib<ul><li><a href="./node_modules/typescript-lsif/lib/lib.es2015.collection.d.ts.html">lib.es2015.collection.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es2015.iterable.d.ts.html">lib.es2015.iterable.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es2015.symbol.wellknown.d.ts.html">lib.es2015.symbol.wellknown.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.dom.d.ts.html">lib.dom.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es5.d.ts.html">lib.es5.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es2015.promise.d.ts.html">lib.es2015.promise.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es2018.promise.d.ts.html">lib.es2018.promise.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es2015.core.d.ts.html">lib.es2015.core.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es2016.array.include.d.ts.html">lib.es2016.array.include.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es2019.array.d.ts.html">lib.es2019.array.d.ts</a></li></ul></li></ul></li><li>@types<ul><li>node<ul><li><a href="./node_modules/@types/node/globals.d.ts.html">globals.d.ts</a></li><li><a href="./node_modules/@types/node/console.d.ts.html">console.d.ts</a></li><li><a href="./node_modules/@types/node/path.d.ts.html">path.d.ts</a></li><li>fs<ul><li><a href="./node_modules/@types/node/fs/promises.d.ts.html">promises.d.ts</a></li></ul></li><li><a href="./node_modules/@types/node/buffer.d.ts.html">buffer.d.ts</a></li><li><a href="./node_modules/@types/node/process.d.ts.html">process.d.ts</a></li></ul></li><li>ejs<ul><li><a href="./node_modules/@types/ejs/index.d.ts.html">index.d.ts</a></li></ul></li><li>markdown-it<ul><li>lib<ul><li><a href="./node_modules/@types/markdown-it/lib/index.d.ts.html">index.d.ts</a></li></ul></li><li><a href="./node_modules/@types/markdown-it/index.d.ts.html">index.d.ts</a></li></ul></li></ul></li><li>lsif-protocol<ul><li>lib<ul><li><a href="./node_modules/lsif-protocol/lib/protocol.d.ts.html">protocol.d.ts</a></li><li><a href="./node_modules/lsif-protocol/lib/main.d.ts.html">main.d.ts</a></li></ul></li></ul></li><li>highlight.js<ul><li>types<ul><li><a href="./node_modules/highlight.js/types/index.d.ts.html">index.d.ts</a></li></ul></li></ul></li><li>vscode-languageserver-types<ul><li>lib<ul><li>umd<ul><li><a href="./node_modules/vscode-languageserver-types/lib/umd/main.d.ts.html">main.d.ts</a></li></ul></li></ul></li></ul></li><li>vscode-languageserver-protocol<ul><li>lib<ul><li>common<ul><li><a href="./node_modules/vscode-languageserver-protocol/lib/common/api.d.ts.html">api.d.ts</a></li></ul></li></ul></li></ul></li><li>commander<ul><li>typings<ul><li><a href="./node_modules/commander/typings/index.d.ts.html">index.d.ts</a></li></ul></li></ul></li></ul></li><li><a href="./util.ts.html">util.ts</a></li><li class="current-file"><a href="./paths.ts.html">paths.ts</a></li><li><a href="./lsif.ts.html">lsif.ts</a></li><li><a href="./tree.ts.html">tree.ts</a></li><li>templates<ul><li><a href="./templates/index.ts.html">index.ts</a></li></ul></li><li><a href="./index.ts.html">index.ts</a></li><li><a href="./cli.ts.html">cli.ts</a></li></ul></div>
+      <div class="side-panel-tab" id="panel-search" hidden>
+        <input type="text" id="search-input" disabled>
+        <div id="search-result">Not implemented yet</div>
+      </div>
+    </div>
+    <div id = "main-panel">
+    <pre id="line-numbers"><span id="1">   1| </span>
+<span id="2">   2| </span>
+<span id="3">   3| </span>
+<span id="4">   4| </span>
+<span id="5">   5| </span>
+
+    </pre>
+    <pre id="code"><code class="language-js"><span class="hljs-keyword">import</span> { <span id="lsif1339">join</span>, <span id="lsif1347">dirname</span> } <span class="hljs-keyword">from</span> <span class="hljs-string"><span id="lsif1351">&quot;path&quot;</span></span>;
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span id="lsif1359">rootFolder</span> = <span class="hljs-title function_"><span id="lsif1363">dirname</span></span>(<span id="lsif1375">__dirname</span>);<span class="hljs-comment">//dirname(new URL(import.meta.url).pathname);</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span id="lsif1383">distFolder</span> = <span class="hljs-title function_"><span id="lsif1387">join</span></span>(<span id="lsif1389">rootFolder</span>, <span class="hljs-string">&#x27;dist&#x27;</span>);
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span id="lsif1397">templateFolder</span> = <span class="hljs-title function_"><span id="lsif1401">join</span></span>(<span id="lsif1403">rootFolder</span>, <span class="hljs-string">&#x27;templates&#x27;</span>);
+</code></pre>
+    </div>
+    <script src="https://unpkg.com/@popperjs/core@2.10.1" integrity="sha384-W8fXfP3gkOKtndU4JGtKDvXbO53Wy8SZCQHczT5FMiiqmQfUpWbYdTil/SxwZgAN" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/tippy.js@6.3.1" integrity="sha384-vJRz16GTXNh0rYTtwJHOvYKAak1mFPGhLKTioEv5FQz+vxPy/UK77RAjCyUIHFGB" crossorigin="anonymous"></script>
+    <script src="_dist/main.js?v=1668113779537"></script>
+  </body>
+</html>

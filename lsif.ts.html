@@ -1,0 +1,328 @@
+<html>
+  <head>
+    <base href="./">
+    <title>lsif.ts - Sourcetree</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/vs2015.min.css" integrity="sha384-BE+nmfgoK1j3fBxbLI64Jzf52Mx/QAyw+4O7GyPYevJnAyrljCoRtQkYNfCfuWPF" crossorigin="anonymous">
+    <link rel="stylesheet" href="_dist/main.css?v=1668113779537">
+  </head>
+  <body style="display: flex; flex-direction: row; margin: 0;">
+    <div id="side-panel">
+      <div id="side-panel-tabs">
+        <div id="tab-panel-files" class="side-panel-tabs-button enabled">files</div>
+        <div id="tab-panel-search" class="side-panel-tabs-button">search</div>
+      </div>
+      <div class="side-panel-tab" id="panel-files"><ul><li>debug<ul><li><a href="./debug/flags.ts.html">flags.ts</a></li><li><a href="./debug/bench.ts.html">bench.ts</a></li></ul></li><li>node_modules<ul><li>typescript-lsif<ul><li>lib<ul><li><a href="./node_modules/typescript-lsif/lib/lib.es2015.collection.d.ts.html">lib.es2015.collection.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es2015.iterable.d.ts.html">lib.es2015.iterable.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es2015.symbol.wellknown.d.ts.html">lib.es2015.symbol.wellknown.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.dom.d.ts.html">lib.dom.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es5.d.ts.html">lib.es5.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es2015.promise.d.ts.html">lib.es2015.promise.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es2018.promise.d.ts.html">lib.es2018.promise.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es2015.core.d.ts.html">lib.es2015.core.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es2016.array.include.d.ts.html">lib.es2016.array.include.d.ts</a></li><li><a href="./node_modules/typescript-lsif/lib/lib.es2019.array.d.ts.html">lib.es2019.array.d.ts</a></li></ul></li></ul></li><li>@types<ul><li>node<ul><li><a href="./node_modules/@types/node/globals.d.ts.html">globals.d.ts</a></li><li><a href="./node_modules/@types/node/console.d.ts.html">console.d.ts</a></li><li><a href="./node_modules/@types/node/path.d.ts.html">path.d.ts</a></li><li>fs<ul><li><a href="./node_modules/@types/node/fs/promises.d.ts.html">promises.d.ts</a></li></ul></li><li><a href="./node_modules/@types/node/buffer.d.ts.html">buffer.d.ts</a></li><li><a href="./node_modules/@types/node/process.d.ts.html">process.d.ts</a></li></ul></li><li>ejs<ul><li><a href="./node_modules/@types/ejs/index.d.ts.html">index.d.ts</a></li></ul></li><li>markdown-it<ul><li>lib<ul><li><a href="./node_modules/@types/markdown-it/lib/index.d.ts.html">index.d.ts</a></li></ul></li><li><a href="./node_modules/@types/markdown-it/index.d.ts.html">index.d.ts</a></li></ul></li></ul></li><li>lsif-protocol<ul><li>lib<ul><li><a href="./node_modules/lsif-protocol/lib/protocol.d.ts.html">protocol.d.ts</a></li><li><a href="./node_modules/lsif-protocol/lib/main.d.ts.html">main.d.ts</a></li></ul></li></ul></li><li>highlight.js<ul><li>types<ul><li><a href="./node_modules/highlight.js/types/index.d.ts.html">index.d.ts</a></li></ul></li></ul></li><li>vscode-languageserver-types<ul><li>lib<ul><li>umd<ul><li><a href="./node_modules/vscode-languageserver-types/lib/umd/main.d.ts.html">main.d.ts</a></li></ul></li></ul></li></ul></li><li>vscode-languageserver-protocol<ul><li>lib<ul><li>common<ul><li><a href="./node_modules/vscode-languageserver-protocol/lib/common/api.d.ts.html">api.d.ts</a></li></ul></li></ul></li></ul></li><li>commander<ul><li>typings<ul><li><a href="./node_modules/commander/typings/index.d.ts.html">index.d.ts</a></li></ul></li></ul></li></ul></li><li><a href="./util.ts.html">util.ts</a></li><li><a href="./paths.ts.html">paths.ts</a></li><li class="current-file"><a href="./lsif.ts.html">lsif.ts</a></li><li><a href="./tree.ts.html">tree.ts</a></li><li>templates<ul><li><a href="./templates/index.ts.html">index.ts</a></li></ul></li><li><a href="./index.ts.html">index.ts</a></li><li><a href="./cli.ts.html">cli.ts</a></li></ul></div>
+      <div class="side-panel-tab" id="panel-search" hidden>
+        <input type="text" id="search-input" disabled>
+        <div id="search-result">Not implemented yet</div>
+      </div>
+    </div>
+    <div id = "main-panel">
+    <pre id="line-numbers"><span id="1">   1| </span>
+<span id="2">   2| </span>
+<span id="3">   3| </span>
+<span id="4">   4| </span>
+<span id="5">   5| </span>
+<span id="6">   6| </span>
+<span id="7">   7| </span>
+<span id="8">   8| </span>
+<span id="9">   9| </span>
+<span id="10">  10| </span>
+<span id="11">  11| </span>
+<span id="12">  12| </span>
+<span id="13">  13| </span>
+<span id="14">  14| </span>
+<span id="15">  15| </span>
+<span id="16">  16| </span>
+<span id="17">  17| </span>
+<span id="18">  18| </span>
+<span id="19">  19| </span>
+<span id="20">  20| </span>
+<span id="21">  21| </span>
+<span id="22">  22| </span>
+<span id="23">  23| </span>
+<span id="24">  24| </span>
+<span id="25">  25| </span>
+<span id="26">  26| </span>
+<span id="27">  27| </span>
+<span id="28">  28| </span>
+<span id="29">  29| </span>
+<span id="30">  30| </span>
+<span id="31">  31| </span>
+<span id="32">  32| </span>
+<span id="33">  33| </span>
+<span id="34">  34| </span>
+<span id="35">  35| </span>
+<span id="36">  36| </span>
+<span id="37">  37| </span>
+<span id="38">  38| </span>
+<span id="39">  39| </span>
+<span id="40">  40| </span>
+<span id="41">  41| </span>
+<span id="42">  42| </span>
+<span id="43">  43| </span>
+<span id="44">  44| </span>
+<span id="45">  45| </span>
+<span id="46">  46| </span>
+<span id="47">  47| </span>
+<span id="48">  48| </span>
+<span id="49">  49| </span>
+<span id="50">  50| </span>
+<span id="51">  51| </span>
+<span id="52">  52| </span>
+<span id="53">  53| </span>
+<span id="54">  54| </span>
+<span id="55">  55| </span>
+<span id="56">  56| </span>
+<span id="57">  57| </span>
+<span id="58">  58| </span>
+<span id="59">  59| </span>
+<span id="60">  60| </span>
+<span id="61">  61| </span>
+<span id="62">  62| </span>
+<span id="63">  63| </span>
+<span id="64">  64| </span>
+<span id="65">  65| </span>
+<span id="66">  66| </span>
+<span id="67">  67| </span>
+<span id="68">  68| </span>
+<span id="69">  69| </span>
+<span id="70">  70| </span>
+<span id="71">  71| </span>
+<span id="72">  72| </span>
+<span id="73">  73| </span>
+<span id="74">  74| </span>
+<span id="75">  75| </span>
+<span id="76">  76| </span>
+<span id="77">  77| </span>
+<span id="78">  78| </span>
+<span id="79">  79| </span>
+<span id="80">  80| </span>
+<span id="81">  81| </span>
+<span id="82">  82| </span>
+<span id="83">  83| </span>
+<span id="84">  84| </span>
+<span id="85">  85| </span>
+<span id="86">  86| </span>
+<span id="87">  87| </span>
+<span id="88">  88| </span>
+<span id="89">  89| </span>
+<span id="90">  90| </span>
+<span id="91">  91| </span>
+<span id="92">  92| </span>
+<span id="93">  93| </span>
+<span id="94">  94| </span>
+<span id="95">  95| </span>
+<span id="96">  96| </span>
+<span id="97">  97| </span>
+<span id="98">  98| </span>
+<span id="99">  99| </span>
+<span id="100"> 100| </span>
+<span id="101"> 101| </span>
+<span id="102"> 102| </span>
+<span id="103"> 103| </span>
+<span id="104"> 104| </span>
+<span id="105"> 105| </span>
+<span id="106"> 106| </span>
+<span id="107"> 107| </span>
+<span id="108"> 108| </span>
+<span id="109"> 109| </span>
+<span id="110"> 110| </span>
+<span id="111"> 111| </span>
+<span id="112"> 112| </span>
+<span id="113"> 113| </span>
+<span id="114"> 114| </span>
+<span id="115"> 115| </span>
+<span id="116"> 116| </span>
+<span id="117"> 117| </span>
+<span id="118"> 118| </span>
+<span id="119"> 119| </span>
+<span id="120"> 120| </span>
+<span id="121"> 121| </span>
+<span id="122"> 122| </span>
+<span id="123"> 123| </span>
+<span id="124"> 124| </span>
+<span id="125"> 125| </span>
+<span id="126"> 126| </span>
+<span id="127"> 127| </span>
+<span id="128"> 128| </span>
+<span id="129"> 129| </span>
+<span id="130"> 130| </span>
+<span id="131"> 131| </span>
+<span id="132"> 132| </span>
+<span id="133"> 133| </span>
+<span id="134"> 134| </span>
+<span id="135"> 135| </span>
+<span id="136"> 136| </span>
+<span id="137"> 137| </span>
+<span id="138"> 138| </span>
+<span id="139"> 139| </span>
+<span id="140"> 140| </span>
+<span id="141"> 141| </span>
+<span id="142"> 142| </span>
+<span id="143"> 143| </span>
+<span id="144"> 144| </span>
+<span id="145"> 145| </span>
+<span id="146"> 146| </span>
+<span id="147"> 147| </span>
+<span id="148"> 148| </span>
+<span id="149"> 149| </span>
+<span id="150"> 150| </span>
+
+    </pre>
+    <pre id="code"><code class="language-js"><span class="hljs-keyword">import</span> { <span id="lsif1466">readFile</span> } <span class="hljs-keyword">from</span> <span class="hljs-string"><span id="lsif1470">&quot;fs/promises&quot;</span></span>;
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_"><span id="lsif1497">MetaData</span></span>, <span class="hljs-title class_"><span id="lsif1515">Vertex</span></span>, <span class="hljs-title class_"><span id="lsif1535">Edge</span></span>, <span class="hljs-title class_"><span id="lsif1553">Id</span></span>, <span class="hljs-title class_"><span id="lsif1571">Document</span></span>, <span id="lsif1589">next</span> } <span class="hljs-keyword">from</span> <span class="hljs-string"><span id="lsif1610">&quot;lsif-protocol&quot;</span></span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">type</span> <span class="hljs-title class_"><span id="lsif1618">Element</span></span> = <span class="hljs-title class_"><span id="lsif1622">Vertex</span></span> | <span class="hljs-title class_"><span id="lsif1624">Edge</span></span>;
+
+<span class="hljs-keyword">type</span> <span class="hljs-title class_"><span id="lsif1629">SafeMap</span></span>&lt;<span id="lsif1636">A</span>, <span id="lsif1643">B</span>&gt; = <span id="lsif1694">{
+  <span class="hljs-attr"><span id="lsif1650">get</span></span>: <span class="hljs-function"><span id="lsif1668">(<span class="hljs-params"><span id="lsif1657">x</span>: <span id="lsif1661">A</span></span>) =&gt;</span> <span id="lsif1663">B</span></span>,
+  <span class="hljs-attr"><span id="lsif1673">have</span></span>: <span class="hljs-function"><span id="lsif1689">(<span class="hljs-params"><span id="lsif1680">x</span>: <span id="lsif1684">A</span></span>) =&gt;</span> <span class="hljs-built_in">boolean</span></span>,
+}</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">type</span> <span class="hljs-title class_"><span id="lsif1702">Lsif</span></span> = <span id="lsif1859">{
+  <span class="hljs-attr"><span id="lsif1712">items</span></span>: <span class="hljs-title class_"><span id="lsif1716">Element</span></span>[];
+  <span class="hljs-attr"><span id="lsif1724">item</span></span>: <span class="hljs-title class_"><span id="lsif1728">SafeMap</span></span>&lt;<span class="hljs-title class_"><span id="lsif1730">Id</span></span>, <span class="hljs-title class_"><span id="lsif1732">Element</span></span>&gt;;
+  <span class="hljs-attr"><span id="lsif1740">inV</span></span>: <span class="hljs-title class_"><span id="lsif1744">SafeMap</span></span>&lt;<span class="hljs-title class_"><span id="lsif1746">Id</span></span>, <span class="hljs-title class_"><span id="lsif1748">Element</span></span>[]&gt;;
+  <span class="hljs-attr"><span id="lsif1756">outV</span></span>: <span class="hljs-title class_"><span id="lsif1760">SafeMap</span></span>&lt;<span class="hljs-title class_"><span id="lsif1762">Id</span></span>, <span class="hljs-title class_"><span id="lsif1764">Element</span></span>[]&gt;;
+  <span class="hljs-attr"><span id="lsif1772">documents</span></span>: <span class="hljs-title class_"><span id="lsif1776">Document</span></span>[];
+  <span class="hljs-attr"><span id="lsif1784">srcMap</span></span>: <span id="lsif1829">{
+    <span class="hljs-attr"><span id="lsif1791">raw</span></span>: <span class="hljs-function"><span id="lsif1805">(<span class="hljs-params"><span id="lsif1798">x</span>: <span class="hljs-built_in">string</span></span>) =&gt;</span> <span class="hljs-built_in">string</span></span>;
+    <span class="hljs-attr"><span id="lsif1810">lineSplitted</span></span>: <span class="hljs-function"><span id="lsif1824">(<span class="hljs-params"><span id="lsif1817">x</span>: <span class="hljs-built_in">string</span></span>) =&gt;</span> <span class="hljs-built_in">string</span>[]</span>;
+  }</span>;
+  <span class="hljs-attr"><span id="lsif1837">uriPath</span></span>: <span class="hljs-function"><span id="lsif1851">(<span class="hljs-params"><span id="lsif1844">x</span>: <span class="hljs-built_in">string</span></span>) =&gt;</span> <span class="hljs-built_in">string</span></span>;
+}</span>;
+
+
+<span class="hljs-keyword">const</span> <span class="hljs-title function_"><span id="lsif1864">parseMultiLineJs</span></span> = (<span class="hljs-params"><span id="lsif1871">a</span>: <span class="hljs-built_in">string</span></span>) <span id="lsif1878">=&gt;</span>
+  <span id="lsif1880">a</span>
+    .<span class="hljs-title function_"><span id="lsif1891">split</span></span>(<span class="hljs-string">&quot;\n&quot;</span>)
+    .<span class="hljs-title function_"><span id="lsif1905">filter</span></span>(<span class="hljs-function">(<span class="hljs-params"><span id="lsif1910">x</span></span>) <span id="lsif1917">=&gt;</span></span> <span id="lsif1919">x</span> != <span class="hljs-string">&quot;&quot;</span>)
+    .<span class="hljs-title function_"><span id="lsif1931">map</span></span>(<span class="hljs-function">(<span class="hljs-params"><span id="lsif1936">x</span></span>) <span id="lsif1943">=&gt;</span></span> <span class="hljs-variable constant_"><span id="lsif1956">JSON</span></span>.<span class="hljs-title function_"><span id="lsif1968">parse</span></span>(<span id="lsif1970">x</span>));
+
+<span class="hljs-keyword">const</span> <span class="hljs-title function_"><span id="lsif1975">getVertexWithLabel</span></span> = (<span class="hljs-params"><span id="lsif1982">a</span>: <span id="lsif1986">Element</span>[], <span id="lsif1991">label</span>: <span class="hljs-built_in">string</span></span>) <span id="lsif1998">=&gt;</span>
+  <span id="lsif2000">a</span>.<span class="hljs-title function_"><span id="lsif2002">filter</span></span>(<span class="hljs-function">(<span class="hljs-params"><span id="lsif2007">x</span></span>) <span id="lsif2014">=&gt;</span></span> <span id="lsif2016">x</span>.<span class="hljs-property"><span id="lsif2058">type</span></span> == <span class="hljs-string">&quot;vertex&quot;</span> &amp;&amp; <span id="lsif2060">x</span>.<span class="hljs-property"><span id="lsif2282">label</span></span> == <span id="lsif2284">label</span>);
+
+<span class="hljs-keyword">const</span> <span class="hljs-title function_"><span id="lsif2289">getEdgeWithLabel</span></span> = (<span class="hljs-params"><span id="lsif2296">a</span>: <span id="lsif2300">Element</span>[], <span id="lsif2305">label</span>: <span class="hljs-built_in">string</span></span>) <span id="lsif2312">=&gt;</span>
+  <span id="lsif2314">a</span>.<span class="hljs-title function_"><span id="lsif2316">filter</span></span>(<span class="hljs-function">(<span class="hljs-params"><span id="lsif2321">x</span></span>) <span id="lsif2328">=&gt;</span></span> <span id="lsif2330">x</span>.<span class="hljs-property"><span id="lsif2332">type</span></span> == <span class="hljs-string">&quot;edge&quot;</span> &amp;&amp; <span id="lsif2334">x</span>.<span class="hljs-property"><span id="lsif2364">label</span></span> == <span id="lsif2366">label</span>) <span class="hljs-keyword">as</span> <span class="hljs-title class_"><span id="lsif2368">Edge</span></span>[];
+
+<span class="hljs-keyword">const</span> <span class="hljs-title function_"><span id="lsif2373">buildItemMap</span></span> = (<span class="hljs-params"><span id="lsif2380">items</span>: <span id="lsif2384">Element</span>[]</span>) <span id="lsif2389">=&gt;</span> {
+  <span class="hljs-keyword">const</span> <span class="hljs-attr"><span id="lsif2394">result</span></span>: <span class="hljs-title class_"><span id="lsif2398">Map</span></span>&lt;<span class="hljs-title class_"><span id="lsif2400">Id</span></span>, <span class="hljs-title class_"><span id="lsif2402">Element</span></span>&gt; = <span class="hljs-keyword">new</span> <span class="hljs-title class_"><span id="lsif2404">Map</span></span>();
+  <span id="lsif2406">items</span>.<span class="hljs-title function_"><span id="lsif2408">forEach</span></span>(<span class="hljs-function">(<span class="hljs-params"><span id="lsif2413">item</span></span>) <span id="lsif2420">=&gt;</span></span> {
+    <span id="lsif2422">result</span>.<span class="hljs-title function_"><span id="lsif2424">set</span></span>(<span id="lsif2426">item</span>.<span class="hljs-property"><span id="lsif2468">id</span></span>, <span id="lsif2470">item</span>);
+  });
+  <span class="hljs-keyword">return</span> <span id="lsif2472">result</span>;
+};
+
+<span class="hljs-keyword">const</span> <span class="hljs-title function_"><span id="lsif2477">buildInVMap</span></span> = (<span class="hljs-params"><span id="lsif2484">items</span>: <span id="lsif2488">Element</span>[]</span>) <span id="lsif2493">=&gt;</span> {
+  <span class="hljs-keyword">const</span> <span class="hljs-attr"><span id="lsif2498">result</span></span>: <span class="hljs-title class_"><span id="lsif2502">Map</span></span>&lt;<span class="hljs-title class_"><span id="lsif2504">Id</span></span>, <span class="hljs-title class_"><span id="lsif2506">Element</span></span>[]&gt; = <span class="hljs-keyword">new</span> <span class="hljs-title class_"><span id="lsif2508">Map</span></span>();
+  <span class="hljs-keyword">const</span> <span class="hljs-title function_"><span id="lsif2513">insert</span></span> = (<span class="hljs-params"><span id="lsif2520">x</span>: <span id="lsif2524">Element</span>, <span id="lsif2529">id</span>: <span id="lsif2533">Id</span></span>) <span id="lsif2538">=&gt;</span> {
+    <span class="hljs-keyword">let</span> <span id="lsif2543">cur</span> = <span id="lsif2547">result</span>.<span class="hljs-title function_"><span id="lsif2549">get</span></span>(<span id="lsif2551">id</span>) ?? [];
+    <span id="lsif2553">result</span>.<span class="hljs-title function_"><span id="lsif2555">set</span></span>(<span id="lsif2557">id</span>, <span id="lsif2559">cur</span>);
+    <span id="lsif2561">cur</span>.<span class="hljs-title function_"><span id="lsif2573">push</span></span>(<span id="lsif2575">x</span>);
+  };
+  <span id="lsif2577">items</span>.<span class="hljs-title function_"><span id="lsif2579">forEach</span></span>(<span class="hljs-function">(<span class="hljs-params"><span id="lsif2584">item</span>: <span id="lsif2588">Element</span></span>) <span id="lsif2593">=&gt;</span></span> {
+    <span class="hljs-keyword">if</span> (<span id="lsif2595">item</span>.<span class="hljs-property"><span id="lsif2597">type</span></span> != <span class="hljs-string">&#x27;edge&#x27;</span>) {
+      <span class="hljs-keyword">return</span>;
+    }
+    <span class="hljs-keyword">if</span> (<span class="hljs-string">&#x27;inV&#x27;</span> <span class="hljs-keyword">in</span> <span id="lsif2599">item</span>) <span class="hljs-title function_"><span id="lsif2601">insert</span></span>(<span id="lsif2603">item</span>, <span id="lsif2605">item</span>.<span class="hljs-property"><span id="lsif2626">inV</span></span>);
+    <span class="hljs-keyword">if</span> (<span class="hljs-string">&#x27;inVs&#x27;</span> <span class="hljs-keyword">in</span> <span id="lsif2628">item</span>) <span id="lsif2630">item</span>.<span class="hljs-property"><span id="lsif2651">inVs</span></span>.<span class="hljs-title function_"><span id="lsif2653">forEach</span></span>(<span class="hljs-function">(<span class="hljs-params"><span id="lsif2658">id</span>: <span id="lsif2662">Id</span></span>) <span id="lsif2667">=&gt;</span></span> <span class="hljs-title function_"><span id="lsif2669">insert</span></span>(<span id="lsif2671">item</span>, <span id="lsif2673">id</span>));
+  });
+  <span class="hljs-keyword">return</span> <span id="lsif2675">result</span>;
+};
+
+
+<span class="hljs-keyword">const</span> <span class="hljs-title function_"><span id="lsif2680">buildOutVMap</span></span> = (<span class="hljs-params"><span id="lsif2687">items</span>: <span id="lsif2691">Element</span>[]</span>) <span id="lsif2696">=&gt;</span> {
+  <span class="hljs-keyword">const</span> <span class="hljs-attr"><span id="lsif2701">result</span></span>: <span class="hljs-title class_"><span id="lsif2705">Map</span></span>&lt;<span class="hljs-title class_"><span id="lsif2707">Id</span></span>, <span class="hljs-title class_"><span id="lsif2709">Element</span></span>[]&gt; = <span class="hljs-keyword">new</span> <span class="hljs-title class_"><span id="lsif2711">Map</span></span>();
+  <span id="lsif2713">items</span>.<span class="hljs-title function_"><span id="lsif2715">forEach</span></span>(<span class="hljs-function">(<span class="hljs-params"><span id="lsif2720">item</span></span>) <span id="lsif2727">=&gt;</span></span> {
+    <span class="hljs-keyword">if</span> (<span id="lsif2729">item</span>.<span class="hljs-property"><span id="lsif2731">type</span></span> != <span class="hljs-string">&#x27;edge&#x27;</span> || !<span id="lsif2733">item</span>.<span class="hljs-property"><span id="lsif2763">outV</span></span>) {
+      <span class="hljs-keyword">return</span>;
+    }
+    <span class="hljs-keyword">let</span> <span id="lsif2768">cur</span> = <span id="lsif2772">result</span>.<span class="hljs-title function_"><span id="lsif2774">get</span></span>(<span id="lsif2776">item</span>.<span class="hljs-property"><span id="lsif2778">outV</span></span>) ?? [];
+    <span id="lsif2780">result</span>.<span class="hljs-title function_"><span id="lsif2782">set</span></span>(<span id="lsif2784">item</span>.<span class="hljs-property"><span id="lsif2786">outV</span></span>, <span id="lsif2788">cur</span>);
+    <span id="lsif2790">cur</span>.<span class="hljs-title function_"><span id="lsif2792">push</span></span>(<span id="lsif2794">item</span>);
+  });
+  <span class="hljs-keyword">return</span> <span id="lsif2796">result</span>;
+};
+
+<span class="hljs-keyword">function</span> <span id="lsif2801">getFromMap</span>&lt;<span id="lsif2808">A</span>, <span id="lsif2815">B</span>&gt;(<span class="hljs-attr"><span id="lsif2822">map</span></span>: <span class="hljs-title class_"><span id="lsif2826">Map</span></span>&lt;<span id="lsif2828">A</span>, <span id="lsif2830">B</span>&gt;): <span class="hljs-title class_"><span id="lsif2832">SafeMap</span></span>&lt;<span id="lsif2834">A</span>, <span id="lsif2836">B</span>&gt; {
+  <span class="hljs-keyword">return</span> <span id="lsif2925">{
+    <span class="hljs-attr"><span id="lsif2841">get</span></span>: <span class="hljs-function">(<span class="hljs-params"><span id="lsif2848">id</span>: <span id="lsif2852">A</span></span>) <span id="lsif2857">=&gt;</span></span> {
+      <span class="hljs-keyword">const</span> <span id="lsif2862">x</span> = <span id="lsif2866">map</span>.<span class="hljs-title function_"><span id="lsif2868">get</span></span>(<span id="lsif2870">id</span>);
+      <span class="hljs-keyword">if</span> (!<span id="lsif2872">x</span>) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_"><span id="lsif2886">Error</span></span>(<span class="hljs-string">`map doesn&#x27;t have <span class="hljs-subst">${<span id="lsif2888">id</span>}</span>`</span>);
+      <span class="hljs-keyword">return</span> <span id="lsif2890">x</span>;
+    },
+    <span class="hljs-attr"><span id="lsif2895">have</span></span>: <span class="hljs-function">(<span class="hljs-params"><span id="lsif2902">id</span>: <span id="lsif2906">A</span></span>) <span id="lsif2911">=&gt;</span></span> <span id="lsif2913">map</span>.<span class="hljs-title function_"><span id="lsif2915">get</span></span>(<span id="lsif2917">id</span>) !== <span class="hljs-literal"><span id="lsif2920">undefined</span></span>,
+  }</span>;
+}
+
+<span class="hljs-keyword">const</span> <span id="lsif2930">buildSrcMap</span> = <span class="hljs-keyword">async</span> (<span class="hljs-attr"><span id="lsif2937">documents</span></span>: <span class="hljs-title class_"><span id="lsif2941">Document</span></span>[]) <span id="lsif2946">=&gt;</span> {
+  <span class="hljs-keyword">const</span> <span class="hljs-attr"><span id="lsif2951">raw</span></span>: <span class="hljs-title class_"><span id="lsif2955">Map</span></span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt; = <span class="hljs-keyword">new</span> <span class="hljs-title class_"><span id="lsif2957">Map</span></span>();
+  <span class="hljs-keyword">const</span> <span class="hljs-attr"><span id="lsif2962">lineSplitted</span></span>: <span class="hljs-title class_"><span id="lsif2966">Map</span></span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>[]&gt; = <span class="hljs-keyword">new</span> <span class="hljs-title class_"><span id="lsif2968">Map</span></span>();
+  <span class="hljs-keyword">await</span> <span class="hljs-title class_"><span id="lsif2989">Promise</span></span>.<span class="hljs-title function_"><span id="lsif3018">all</span></span>(<span id="lsif3020">documents</span>.<span class="hljs-title function_"><span id="lsif3022">map</span></span>(<span class="hljs-keyword">async</span> (<span id="lsif3027">doc</span>) <span id="lsif3034">=&gt;</span> {
+    <span class="hljs-keyword">const</span> <span id="lsif3039">srcRaw</span> = (<span class="hljs-keyword">await</span> <span class="hljs-title function_"><span id="lsif3043">readFile</span></span>(<span id="lsif3045">doc</span>.<span class="hljs-property"><span id="lsif3057">uri</span></span>.<span class="hljs-title function_"><span id="lsif3069">slice</span></span>(<span class="hljs-number">7</span>))).<span class="hljs-title function_"><span id="lsif3095">toString</span></span>();
+    <span id="lsif3097">raw</span>.<span class="hljs-title function_"><span id="lsif3099">set</span></span>(<span id="lsif3101">doc</span>.<span class="hljs-property"><span id="lsif3103">uri</span></span>, <span id="lsif3105">srcRaw</span>);
+    <span id="lsif3107">lineSplitted</span>.<span class="hljs-title function_"><span id="lsif3109">set</span></span>(<span id="lsif3111">doc</span>.<span class="hljs-property"><span id="lsif3113">uri</span></span>, <span id="lsif3115">srcRaw</span>.<span class="hljs-title function_"><span id="lsif3117">split</span></span>(<span class="hljs-string">&#x27;\n&#x27;</span>));
+  }));
+  <span class="hljs-keyword">return</span> <span id="lsif3148">{ <span class="hljs-attr"><span id="lsif3122">raw</span></span>: <span class="hljs-title function_"><span id="lsif3126">getFromMap</span></span>(<span id="lsif3128">raw</span>).<span class="hljs-property"><span id="lsif3130">get</span></span>, <span class="hljs-attr"><span id="lsif3135">lineSplitted</span></span>: <span class="hljs-title function_"><span id="lsif3139">getFromMap</span></span>(<span id="lsif3141">lineSplitted</span>).<span class="hljs-property"><span id="lsif3143">get</span></span> }</span>;
+};
+
+<span class="hljs-keyword">const</span> <span id="lsif3153">buildUriMap</span> = <span class="hljs-keyword">async</span> (<span class="hljs-attr"><span id="lsif3160">uriMapAddress</span></span>: <span class="hljs-built_in">string</span> | <span class="hljs-literal">undefined</span>, <span class="hljs-attr"><span id="lsif3167">documents</span></span>: <span class="hljs-title class_"><span id="lsif3171">Document</span></span>[], <span class="hljs-attr"><span id="lsif3176">projectRoot</span></span>: <span class="hljs-built_in">string</span>) <span id="lsif3183">=&gt;</span> {
+  <span class="hljs-keyword">const</span> <span class="hljs-attr"><span id="lsif3188">r</span></span>: <span class="hljs-title class_"><span id="lsif3192">Map</span></span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt; = <span class="hljs-keyword">new</span> <span class="hljs-title class_"><span id="lsif3194">Map</span></span>();
+  <span class="hljs-keyword">if</span> (<span id="lsif3196">uriMapAddress</span>) {
+    <span class="hljs-keyword">const</span> <span id="lsif3201">f</span> = <span class="hljs-variable constant_"><span id="lsif3205">JSON</span></span>.<span class="hljs-title function_"><span id="lsif3207">parse</span></span>((<span class="hljs-keyword">await</span> <span class="hljs-title function_"><span id="lsif3209">readFile</span></span>(<span id="lsif3211">uriMapAddress</span>)).<span class="hljs-title function_"><span id="lsif3213">toString</span></span>());
+    <span id="lsif3215">documents</span>.<span class="hljs-title function_"><span id="lsif3217">map</span></span>(<span class="hljs-function">(<span class="hljs-params"><span id="lsif3222">doc</span></span>) <span id="lsif3229">=&gt;</span></span> <span id="lsif3231">doc</span>.<span class="hljs-property"><span id="lsif3233">uri</span></span>).<span class="hljs-title function_"><span id="lsif3235">forEach</span></span>(<span class="hljs-function">(<span class="hljs-params"><span id="lsif3240">x</span></span>) <span id="lsif3247">=&gt;</span></span> {
+      <span class="hljs-keyword">const</span> <span id="lsif3252">y</span> = <span id="lsif3256">f</span>[<span id="lsif3258">x</span>];
+      <span class="hljs-keyword">if</span> (!<span id="lsif3260">y</span>) {
+        <span id="lsif3262">r</span>.<span class="hljs-title function_"><span id="lsif3264">set</span></span>(<span id="lsif3266">x</span>, <span class="hljs-string">`notmapped<span class="hljs-subst">${<span id="lsif3268">x</span>.<span id="lsif3270">slice</span>(<span class="hljs-number">7</span>)}</span>`</span>);
+        <span class="hljs-keyword">return</span>;
+      }
+      <span id="lsif3272">r</span>.<span class="hljs-title function_"><span id="lsif3274">set</span></span>(<span id="lsif3276">x</span>, <span id="lsif3278">y</span>);
+    });
+    <span class="hljs-keyword">return</span> <span class="hljs-title function_"><span id="lsif3280">getFromMap</span></span>(<span id="lsif3282">r</span>);
+  }
+  <span id="lsif3284">documents</span>.<span class="hljs-title function_"><span id="lsif3286">map</span></span>(<span class="hljs-function">(<span class="hljs-params"><span id="lsif3291">doc</span></span>) <span id="lsif3298">=&gt;</span></span> <span id="lsif3300">doc</span>.<span class="hljs-property"><span id="lsif3302">uri</span></span>).<span class="hljs-title function_"><span id="lsif3304">forEach</span></span>(<span class="hljs-function">(<span class="hljs-params"><span id="lsif3309">x</span></span>) <span id="lsif3316">=&gt;</span></span> {
+    <span class="hljs-keyword">if</span> (!<span id="lsif3318">x</span>.<span class="hljs-title function_"><span id="lsif3332">startsWith</span></span>(<span id="lsif3334">projectRoot</span>)) {
+      <span id="lsif3336">r</span>.<span class="hljs-title function_"><span id="lsif3338">set</span></span>(<span id="lsif3340">x</span>, <span class="hljs-string">`notmapped<span class="hljs-subst">${<span id="lsif3342">x</span>.<span id="lsif3344">slice</span>(<span class="hljs-number">7</span>)}</span>`</span>);
+      <span class="hljs-keyword">return</span>;
+    }
+    <span class="hljs-keyword">const</span> <span id="lsif3349">y</span> = <span id="lsif3353">x</span>.<span class="hljs-title function_"><span id="lsif3355">slice</span></span>(<span id="lsif3357">projectRoot</span>.<span class="hljs-property"><span id="lsif3359">length</span></span> + <span class="hljs-number">1</span>);
+    <span id="lsif3361">r</span>.<span class="hljs-title function_"><span id="lsif3363">set</span></span>(<span id="lsif3365">x</span>, <span id="lsif3367">y</span>);
+  });
+  <span class="hljs-keyword">return</span> <span class="hljs-title function_"><span id="lsif3369">getFromMap</span></span>(<span id="lsif3371">r</span>);
+};
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span id="lsif3379">lsifParser</span> = <span class="hljs-keyword">async</span> (<span class="hljs-attr"><span id="lsif3386">address</span></span>: <span class="hljs-built_in">string</span>, <span class="hljs-attr"><span id="lsif3393">uriMapAddress</span></span>: <span class="hljs-built_in">string</span> | <span class="hljs-literal">undefined</span>): <span class="hljs-title class_"><span id="lsif3397">Promise</span></span>&lt;<span class="hljs-title class_"><span id="lsif3399">Lsif</span></span>&gt; <span id="lsif3404">=&gt;</span> {
+  <span class="hljs-keyword">const</span> <span id="lsif3409">text</span> = (<span class="hljs-keyword">await</span> <span class="hljs-title function_"><span id="lsif3413">readFile</span></span>(<span id="lsif3415">address</span>)).<span class="hljs-title function_"><span id="lsif3417">toString</span></span>();
+  <span class="hljs-keyword">const</span> <span class="hljs-attr"><span id="lsif3422">items</span></span>: <span class="hljs-title class_"><span id="lsif3426">Element</span></span>[] = <span class="hljs-title function_"><span id="lsif3428">parseMultiLineJs</span></span>(<span id="lsif3430">text</span>);
+  <span class="hljs-keyword">const</span> <span id="lsif3435">item</span> = <span class="hljs-title function_"><span id="lsif3439">getFromMap</span></span>(<span class="hljs-title function_"><span id="lsif3441">buildItemMap</span></span>(<span id="lsif3443">items</span>));
+  <span class="hljs-keyword">const</span> <span id="lsif3448">inV</span> = <span class="hljs-title function_"><span id="lsif3452">getFromMap</span></span>(<span class="hljs-title function_"><span id="lsif3454">buildInVMap</span></span>(<span id="lsif3456">items</span>));
+  <span class="hljs-keyword">const</span> <span id="lsif3461">outV</span> = <span class="hljs-title function_"><span id="lsif3465">getFromMap</span></span>(<span class="hljs-title function_"><span id="lsif3467">buildOutVMap</span></span>(<span id="lsif3469">items</span>));
+  <span class="hljs-keyword">const</span> { <span id="lsif3474">projectRoot</span> } = <span class="hljs-title function_"><span id="lsif3478">getVertexWithLabel</span></span>(<span id="lsif3480">items</span>, <span class="hljs-string">&quot;metaData&quot;</span>)[<span class="hljs-number">0</span>] <span class="hljs-keyword">as</span> <span class="hljs-title class_"><span id="lsif3482">MetaData</span></span>;
+  <span class="hljs-keyword">const</span> <span id="lsif3487">documents</span> = <span class="hljs-title function_"><span id="lsif3491">getVertexWithLabel</span></span>(<span id="lsif3493">items</span>, <span class="hljs-string">&quot;document&quot;</span>) <span class="hljs-keyword">as</span> <span class="hljs-title class_"><span id="lsif3495">Document</span></span>[];
+  <span class="hljs-keyword">const</span> <span id="lsif3500">srcMap</span> = <span class="hljs-keyword">await</span> <span class="hljs-title function_"><span id="lsif3504">buildSrcMap</span></span>(<span id="lsif3506">documents</span>);
+  <span class="hljs-keyword">const</span> <span id="lsif3511">uriMap</span> = <span class="hljs-keyword">await</span> <span class="hljs-title function_"><span id="lsif3515">buildUriMap</span></span>(<span id="lsif3517">uriMapAddress</span>, <span id="lsif3519">documents</span>, <span id="lsif3521">projectRoot</span>);
+  <span class="hljs-keyword">return</span> <span id="lsif3579">{
+    <span id="lsif3526">items</span>, <span id="lsif3533">item</span>, <span id="lsif3540">inV</span>, <span id="lsif3547">outV</span>, <span id="lsif3554">documents</span>, <span id="lsif3561">srcMap</span>, <span class="hljs-attr"><span id="lsif3568">uriPath</span></span>: <span id="lsif3572">uriMap</span>.<span class="hljs-property"><span id="lsif3574">get</span></span>,
+  }</span>;
+};
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span class="hljs-title function_"><span id="lsif3587">findRecursiveEdge</span></span> = (<span class="hljs-params"><span id="lsif3594">lsif</span>: <span id="lsif3598">Lsif</span>, <span id="lsif3603">v</span>: <span id="lsif3607">Id</span>, <span id="lsif3612">label</span>: <span class="hljs-built_in">string</span></span>) <span id="lsif3619">=&gt;</span> {
+  <span class="hljs-keyword">const</span> { <span id="lsif3624">outV</span>, <span id="lsif3631">item</span> } = <span id="lsif3635">lsif</span>;
+  <span class="hljs-keyword">for</span> (; ;) {
+    <span class="hljs-keyword">if</span> (!<span id="lsif3637">outV</span>.<span class="hljs-title function_"><span id="lsif3639">have</span></span>(<span id="lsif3641">v</span>)) <span class="hljs-keyword">return</span>;
+    <span class="hljs-keyword">const</span> <span id="lsif3646">out</span> = <span id="lsif3650">outV</span>.<span class="hljs-title function_"><span id="lsif3652">get</span></span>(<span id="lsif3654">v</span>);
+    <span class="hljs-keyword">const</span> <span id="lsif3659">direct</span> = <span class="hljs-title function_"><span id="lsif3663">getEdgeWithLabel</span></span>(<span id="lsif3665">out</span>, <span id="lsif3667">label</span>).<span class="hljs-title function_"><span id="lsif3669">filter</span></span>(<span class="hljs-title class_"><span id="lsif3671">Edge</span></span>.<span class="hljs-property"><span id="lsif3683">is11</span></span>);
+    <span class="hljs-keyword">if</span> (<span id="lsif3685">direct</span>.<span class="hljs-property"><span id="lsif3697">length</span></span> &gt; <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> <span id="lsif3699">item</span>.<span class="hljs-title function_"><span id="lsif3701">get</span></span>(<span id="lsif3703">direct</span>[<span class="hljs-number">0</span>].<span class="hljs-property"><span id="lsif3729">inV</span></span>);
+    <span class="hljs-keyword">const</span> <span id="lsif3734">next</span> = <span class="hljs-title function_"><span id="lsif3738">getEdgeWithLabel</span></span>(<span id="lsif3740">out</span>, <span class="hljs-string">&#x27;next&#x27;</span>) <span class="hljs-keyword">as</span> <span id="lsif3742">next</span>[];
+    <span class="hljs-keyword">if</span> (<span id="lsif3744">next</span>.<span class="hljs-property"><span id="lsif3746">length</span></span> == <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span>;
+    <span id="lsif3748">v</span> = <span id="lsif3750">next</span>[<span class="hljs-number">0</span>].<span class="hljs-property"><span id="lsif3752">inV</span></span>;
+  }
+};
+</code></pre>
+    </div>
+    <script src="https://unpkg.com/@popperjs/core@2.10.1" integrity="sha384-W8fXfP3gkOKtndU4JGtKDvXbO53Wy8SZCQHczT5FMiiqmQfUpWbYdTil/SxwZgAN" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/tippy.js@6.3.1" integrity="sha384-vJRz16GTXNh0rYTtwJHOvYKAak1mFPGhLKTioEv5FQz+vxPy/UK77RAjCyUIHFGB" crossorigin="anonymous"></script>
+    <script src="_dist/main.js?v=1668113779537"></script>
+  </body>
+</html>
