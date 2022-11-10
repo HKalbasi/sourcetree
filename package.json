@@ -1,6 +1,6 @@
 {
   "name": "sourcetree-cli",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "View your sourcecode in browser like an ide",
   "main": "index.js",
   "bin": {
